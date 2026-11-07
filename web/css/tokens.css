@@ -1,0 +1,33 @@
+/* Rumbo Norte — generated from tokens.json */
+:root {
+  --navy: #0b2543;
+  --navy-raised: #15345c;
+  --orange: #fd5d03;
+  --orange-deep: #c24400;
+  --surface: #ffffff;
+  --surface-tint: #fff4ec;
+  --sand-soft: #f1eadf;
+  --sage-soft: #e6ebe1;
+  --mist-soft: #e4ebf0;
+  --stone-soft: #f0f0ee;
+  --charcoal: #161616;
+  --charcoal-muted: #55554f;
+  --ink: var(--navy);
+  --ink-muted: #4a5b70;
+  --line: #dfe3e8;
+  --line-soft: #d9d9d5;
+  --on-navy: #ffffff;
+  --on-navy-muted: #c5d0dd;
+  --on-orange: var(--navy);
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 6px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+  --font-display: Anton, Impact, "Arial Narrow", sans-serif;
+  --font-sans: Figtree, system-ui, -apple-system, "Segoe UI", sans-serif;
+}

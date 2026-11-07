@@ -1,0 +1,6 @@
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+#contenido { position: relative; }
+.rn-route { position: absolute; left: 0; top: 0; z-index: 3; overflow: visible; pointer-events: none; }
+.rn-route path:first-child { fill: none; stroke: var(--orange); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.rn-route-tip { fill: var(--orange); transition: opacity .2s ease; }

@@ -1,0 +1,102 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Render</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#fff}canvas{display:block;width:760px;height:760px}</style></head>
+<body><canvas id="c"></canvas>
+<script src="scene.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+const SCENE = +(q.get('scene') || 1), SIZE = +(q.get('size') || 512), SPP = +(q.get('spp') || 64), SAVE = q.get('save');
+const cv = document.getElementById('c'); cv.width = cv.height = SIZE;
+const gl = cv.getContext('webgl2', { alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: true, antialias: false });
+window.status_ = { frame: 0, done: false, gpu: '' };
+cv.addEventListener('webglcontextlost', e => { e.preventDefault(); status_.err = 'context lost at ' + status_.frame; });
+const mc = new MessageChannel(); let tick = null; mc.port1.onmessage = () => tick && tick();
+const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+status_.gpu = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'n/a';
+gl.getExtension('EXT_color_buffer_float');
+
+const VS = `#version 300 es
+void main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.-1.,0,1);}`;
+function prog(fs) {
+  const p = gl.createProgram();
+  for (const [t, s] of [[gl.VERTEX_SHADER, VS], [gl.FRAGMENT_SHADER, fs]]) {
+    const sh = gl.createShader(t); gl.shaderSource(sh, s); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) { status_.err = gl.getShaderInfoLog(sh); throw new Error(status_.err); }
+    gl.attachShader(p, sh);
+  }
+  gl.linkProgram(p);
+  if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { status_.err = gl.getProgramInfoLog(p); throw new Error(status_.err); }
+  return p;
+}
+function target() {
+  const fb = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  const tx = [0, 1].map(i => {
+    const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32F, SIZE, SIZE, 0, gl.RGBA, gl.FLOAT, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0 + i, gl.TEXTURE_2D, t, 0);
+    return t;
+  });
+  gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1]);
+  return { fb, tx };
+}
+async function decal() {
+  await Promise.all([document.fonts.load('400 300px Anton'), document.fonts.load('800 300px Figtree')]);
+  const c = document.createElement('canvas'); c.width = c.height = 1024;
+  const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, 1024, 1024);
+  x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.font = '400 230px Anton'; x.fillText('SNA', 256, 266); x.fillText('SNF', 768, 266);
+  x.font = '800 400px Figtree'; x.fillText('€', 256, 778);
+  x.font = '400 170px Anton'; x.fillText('NÓMINA', 768, 778);
+  const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+}
+(async () => {
+  await decal();
+  const P = prog(traceSource(SCENE)), D = prog(displaySource());
+  gl.activeTexture(gl.TEXTURE3);
+  let a = target(), b = target();
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  gl.viewport(0, 0, SIZE, SIZE);
+  const u = (p, n) => gl.getUniformLocation(p, n);
+  const uF = u(P, 'uFrame'), uR = u(P, 'uRes');
+  let frame = 0;
+  function step() {
+    gl.useProgram(P);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, b.fb);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, a.tx[0]);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, a.tx[1]);
+    gl.uniform1i(u(P, 'uA'), 0); gl.uniform1i(u(P, 'uB'), 1); gl.uniform1i(u(P, 'uDecal'), 2);
+    gl.uniform1i(uF, frame); gl.uniform2f(uR, SIZE, SIZE);
+    gl.enable(gl.SCISSOR_TEST);
+    const TL = 4, ts = Math.ceil(SIZE / TL);
+    for (let ty = 0; ty < TL; ty++) for (let tx = 0; tx < TL; tx++) {
+      gl.scissor(tx * ts, ty * ts, ts, ts); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.flush();
+    }
+    gl.disable(gl.SCISSOR_TEST);
+    [a, b] = [b, a]; frame++;
+    status_.frame = frame;
+    if (frame % 25 && frame < SPP) { mc.port2.postMessage(0); return; }
+    gl.useProgram(D); gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, a.tx[0]);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, a.tx[1]);
+    gl.uniform1i(u(D, 'uA'), 0); gl.uniform1i(u(D, 'uB'), 1); gl.uniform1f(u(D, 'uN'), frame);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.finish();
+    status_.frame = frame;
+    if (status_.err) return;
+    if (frame < SPP) { mc.port2.postMessage(0); return; }
+    if (!SAVE) { status_.done = true; return; }
+    cv.toBlob(bl => fetch('/save/' + SAVE, { method: 'POST', body: bl }).then(() => { status_.done = true; status_.bytes = bl.size; }), 'image/webp', 0.93);
+  }
+  status_.t0 = performance.now();
+  tick = step;
+  step();
+})().catch(e => { status_.err = status_.err || String(e); });
+</script></body></html>

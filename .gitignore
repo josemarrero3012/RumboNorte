@@ -1,0 +1,11 @@
+# Web generada: la compila GitHub Actions o `node build.mjs`
+dist/
+
+# Blender portátil (1,1 GB); se descarga aparte, ver README
+.tools/
+
+# Configuración local
+.claude/settings.local.json
+__pycache__/
+*.blend1
+.DS_Store
