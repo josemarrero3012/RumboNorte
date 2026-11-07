@@ -67,7 +67,7 @@ function links() {
       if (/^https?:/.test(h)) { outside.add(h); continue; }
       if (/^(mailto|tel):/.test(h)) continue;
       const [path, hash] = h.split('#');
-      const target = path === '' ? f : path === '/' ? 'index.html' : path.replace(/^\//, '');
+      const target = path === '' ? f : /^\.?\/$/.test(path) ? 'index.html' : path.replace(/^\.?\//, '');
       if (!ids[target]) { report('enlace', `${f}: ${h} no existe`); continue; }
       if (hash && !ids[target].has(hash)) report('enlace', `${f}: el ancla ${h} no existe`);
     }
