@@ -41,7 +41,7 @@
 
   function Lines(props) {
     return (props.lines || []).map(function (t, i) {
-      return h('span', { key: t, className: i === props.accent ? 'rn-accent' : null }, t, ' ');
+      return h('span', { key: t, className: i === props.accent ? 'rn-accent' : null, style: { '--i': i } }, t, ' ');
     });
   }
 
@@ -69,19 +69,41 @@
     return h(props.href ? 'a' : 'button', rest, icon, props.children);
   }
 
+  // Sello redondo: la frase rodea todo el anillo y la flecha del logo marca dónde empieza.
+  // El espaciado se calcula con la tipografía ya cargada, igual en todos los navegadores.
+  var RING_R = 78, RING_GAP = 30, RING_C = 2 * Math.PI * RING_R;
+  var RING_ARROW = 'M14.3 90.6L21.2 109.4L14.3 104.4L7.4 109.4Z';
+
   function Sticker(props) {
     var id = React.useId().replace(/:/g, '');
-    var text = props.text;
+    var text = (props.text || '').replace(/[\s·•]+$/, '');
+    var textRef = React.useRef(null), pathRef = React.useRef(null);
+
+    React.useEffect(function () {
+      var el = textRef.current, tp = pathRef.current;
+      if (!el || !document.fonts) return undefined;
+      var live = true;
+      document.fonts.ready.then(function () {
+        if (!live) return;
+        el.style.letterSpacing = '0px';
+        var spacing = Math.max(0, (RING_C - RING_GAP - el.getComputedTextLength()) / text.length);
+        el.style.letterSpacing = spacing.toFixed(2) + 'px';
+        tp.setAttribute('startOffset', ((RING_GAP + spacing) / 2).toFixed(1));
+      });
+      return function () { live = false; };
+    }, [text]);
+
     return h('span', { className: cx('rn-sticker', 'rn-sticker-' + (props.tone || 'white'), props.className), 'aria-hidden': 'true' },
       h('svg', { viewBox: '0 0 200 200' },
         h('circle', { className: 'rn-sticker-disc', cx: 100, cy: 100, r: 100 }),
         h('defs', null,
-          h('path', { id: id, d: 'M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0' }),
-          h('clipPath', { id: id + 'c' }, h('circle', { cx: 100, cy: 100, r: 66 }))),
+          h('path', { id: id, d: 'M100 100m-' + RING_R + ' 0a' + RING_R + ' ' + RING_R + ' 0 1 1 ' + 2 * RING_R + ' 0a' + RING_R + ' ' + RING_R + ' 0 1 1-' + 2 * RING_R + ' 0' }),
+          h('clipPath', { id: id + 'c' }, h('circle', { cx: 100, cy: 100, r: 70 }))),
         h('g', { className: 'rn-sticker-ring' },
-          h('text', { className: 'rn-sticker-text' },
-            h('textPath', { href: '#' + id, textLength: 486, lengthAdjust: 'spacing' }, text))),
-        props.photoSrc ? h('image', { href: props.photoSrc, x: 34, y: 34, width: 132, height: 132, preserveAspectRatio: 'xMidYMid slice', clipPath: 'url(#' + id + 'c)' }) : null,
+          h('text', { ref: textRef, className: 'rn-sticker-text' },
+            h('textPath', { ref: pathRef, href: '#' + id, startOffset: 17 }, text)),
+          h('path', { className: 'rn-sticker-arrow', d: RING_ARROW })),
+        props.photoSrc ? h('image', { href: props.photoSrc, x: 30, y: 30, width: 140, height: 140, preserveAspectRatio: 'xMidYMid slice', clipPath: 'url(#' + id + 'c)' }) : null,
         props.src ? h('image', { href: props.src, x: 46, y: 46, width: 108, height: 108, preserveAspectRatio: 'xMidYMid meet' }) : null));
   }
 
@@ -93,7 +115,8 @@
     return h('header', { className: 'rn-header rn-on-navy' },
       h('a', { className: 'rn-skip', href: '#contenido' }, 'Saltar al contenido'),
       h('a', { className: 'rn-header-logo', href: props.homeHref || '#', 'aria-label': 'Rumbo Norte, inicio' },
-        h('img', { src: props.logoSrc, alt: '', width: 216, height: 27 })),
+        props.markSrc ? h('img', { className: 'rn-header-mark', src: props.markSrc, alt: '', width: 36, height: 39 }) : null,
+        h('img', { className: 'rn-header-wordmark', src: props.logoSrc, alt: '', width: 216, height: 27 })),
       h('nav', { className: 'rn-header-nav', 'aria-label': 'Principal' },
         links.map(function (l) { return h('a', { key: l.href, className: 'rn-header-link', href: l.href, 'aria-current': l.href === props.current ? 'page' : null }, l.label); }),
         props.cta ? h(Button, { href: props.cta.href, size: 'sm', icon: props.cta.icon }, props.cta.label) : null),
@@ -122,10 +145,73 @@
     return items.slice(0, -1).join(', ') + ' o ' + items[items.length - 1];
   }
 
+  // La franja naranja de la curva se dibuja de izquierda a derecha al cargar (rn-hero-curve-wipe, en CSS).
   function Curve() {
+    var id = React.useId().replace(/:/g, '');
     return h('svg', { className: 'rn-hero-curve', viewBox: '0 0 1440 160', preserveAspectRatio: 'none', 'aria-hidden': 'true' },
+      h('defs', null, h('clipPath', { id: id }, h('rect', { className: 'rn-hero-curve-wipe', width: 1440, height: 160 }))),
       h('path', { className: 'rn-hero-curve-ground', d: 'M0 160V150C380 146 920 112 1440 14V160Z' }),
-      h('path', { className: 'rn-hero-curve-road', d: 'M0 112C400 112 920 84 1440 14C920 112 380 146 0 150Z' }));
+      h('path', { className: 'rn-hero-curve-road', d: 'M0 112C400 112 920 84 1440 14C920 112 380 146 0 150Z', clipPath: 'url(#' + id + ')' }));
+  }
+
+  // En el servidor no hay pantalla que pintar: ahí basta useEffect y React no avisa.
+  var useBeforePaint = typeof document === 'undefined' ? React.useEffect : React.useLayoutEffect;
+
+  var PLANE = 'M18 0C18-1.6 16.5-2.4 14-2.4H4L-5-16H-9.5L-4.5-2.4H-12L-15.5-7.5H-18.5L-16.2 0L-18.5 7.5H-15.5L-12 2.4H-4.5L-9.5 16H-5L4 2.4H14C16.5 2.4 18 1.6 18 0Z';
+  var PIN = 'M0 0C-3-7-12-12-12-22A12 12 0 1 1 12-22C12-12 3-7 0 0Z';
+
+  // La ruta es una curva que sale de España y sube hacia el destino, combada hacia el este, sobre Francia.
+  // Sin animación, el avión se queda a mitad de camino; js/heroe.js lo hace volar con GSAP.
+  function flightPath(o, p) {
+    var c = [(o[0] + p[0]) / 2 - (p[1] - o[1]) * .22, (o[1] + p[1]) / 2 + (p[0] - o[0]) * .22];
+    var t = .62, u = 1 - t;
+    var e = [u * u * o[0] + 2 * u * t * c[0] + t * t * p[0], u * u * o[1] + 2 * u * t * c[1] + t * t * p[1]];
+    var dx = 2 * u * (c[0] - o[0]) + 2 * t * (p[0] - c[0]), dy = 2 * u * (c[1] - o[1]) + 2 * t * (p[1] - c[1]);
+    return {
+      d: 'M' + o.join(' ') + 'Q' + c[0].toFixed(1) + ' ' + c[1].toFixed(1) + ' ' + p.join(' '),
+      plane: 'translate(' + e[0].toFixed(1) + ' ' + e[1].toFixed(1) + ') rotate(' + (Math.atan2(dy, dx) * 180 / Math.PI).toFixed(1) + ')'
+    };
+  }
+
+  // Mapa de Europa detrás del hero: el país del titular se ilumina y un avión vuela hasta él desde España.
+  function HeroMap(props) {
+    var m = props.map;
+    var place = m.places.filter(function (p) { return p.name === props.country; })[0] || m.places[0];
+    var id = React.useId().replace(/:/g, '');
+    var path = flightPath(m.origin, place.pin);
+
+    function use(ref, className, extra) {
+      return h('use', Object.assign({ key: className + ref, href: m.src + '#' + ref, className: className }, extra));
+    }
+    return h('div', { className: 'rn-hero-map', 'aria-hidden': 'true' },
+      h('svg', { viewBox: '0 0 ' + m.width + ' ' + m.height },
+        h('defs', null,
+          // La tierra se funde con el fondo hacia los bordes; la ruta y el destino quedan enteros encima.
+          h('radialGradient', { id: id + 'f', gradientUnits: 'userSpaceOnUse', cx: m.width * .5, cy: m.height * .52, r: m.width * .7 },
+            h('stop', { offset: .5, stopColor: '#fff' }), h('stop', { offset: 1, stopColor: '#000' })),
+          h('mask', { id: id + 'm', maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: m.width, height: m.height },
+            h('rect', { width: m.width, height: m.height, fill: 'url(#' + id + 'f)' })),
+          // La línea es discontinua: se descubre dibujando este trazo continuo de la máscara.
+          h('mask', { id: id + 'r', maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: m.width, height: m.height },
+            h('path', { className: 'rn-hero-map-reveal', d: path.d, fill: 'none', stroke: '#fff', strokeWidth: 12, strokeLinecap: 'round' })),
+          h('filter', { id: id + 'g', x: '-40%', y: '-40%', width: '180%', height: '180%' },
+            h('feGaussianBlur', { in: 'SourceGraphic', stdDeviation: 9, result: 'a' }),
+            h('feGaussianBlur', { in: 'SourceGraphic', stdDeviation: 3, result: 'b' }),
+            h('feMerge', null, h('feMergeNode', { in: 'a' }), h('feMergeNode', { in: 'b' }), h('feMergeNode', { in: 'SourceGraphic' })))),
+        h('g', { mask: 'url(#' + id + 'm)' },
+          use('tierra', 'rn-hero-map-land'),
+          m.places.map(function (p) { return use(p.id, 'rn-hero-map-dest'); })),
+        m.places.map(function (p) {
+          return use(p.id, cx('rn-hero-map-place', p.id === place.id && 'is-on'), { filter: 'url(#' + id + 'g)' });
+        }),
+        h('path', { className: 'rn-hero-map-route', d: path.d, mask: 'url(#' + id + 'r)' }),
+        h('circle', { className: 'rn-hero-map-origin-ring', cx: m.origin[0], cy: m.origin[1], r: 7 }),
+        h('circle', { className: 'rn-hero-map-origin', cx: m.origin[0], cy: m.origin[1], r: 7 }),
+        h('g', { transform: 'translate(' + place.pin.join(' ') + ')' },
+          h('g', { key: place.id, className: 'rn-hero-map-pin' },
+            h('path', { d: PIN }), h('circle', { cx: 0, cy: -22, r: 4.8 }))),
+        h('g', { className: 'rn-hero-map-plane', transform: path.plane },
+          h('path', { d: PLANE }))));
   }
 
   function Hero(props) {
@@ -135,34 +221,43 @@
     var leadEnd = leadWords.pop();
     var state = React.useState(0);
     var index = state[0], setIndex = state[1];
-    var paused = React.useRef(false);
+    var paused = React.useRef(false), visible = React.useRef(true), section = React.useRef(null);
 
+    // El país cambia mientras el hero está a la vista; se para con el ratón sobre el titular,
+    // al bajar por la página o con la pestaña en segundo plano.
     React.useEffect(function () {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-      var ticks = 0;
+      var seen = 'IntersectionObserver' in window ? new IntersectionObserver(function (e) { visible.current = e[0].isIntersecting; }) : null;
+      if (seen) seen.observe(section.current);
       var timer = setInterval(function () {
-        if (paused.current) return;
-        ticks += 1;
+        if (paused.current || !visible.current || document.hidden) return;
         setIndex(function (i) { return (i + 1) % countries.length; });
-        if (ticks >= countries.length * 2) clearInterval(timer);
-      }, 2600);
-      return function () { clearInterval(timer); };
+      }, 3200);
+      return function () { clearInterval(timer); if (seen) seen.disconnect(); };
     }, [countries.length]);
+
+    // Avisa del cambio antes de pintar, para que js/heroe.js prepare el vuelo y las letras sin parpadeo.
+    var first = React.useRef(true);
+    useBeforePaint(function () {
+      if (first.current) { first.current = false; return; }
+      window.dispatchEvent(new CustomEvent('rn-hero-pais', { detail: { index: index } }));
+    }, [index]);
 
     function pause() { paused.current = true; }
     function resume() { paused.current = false; }
 
-    return h('section', { className: 'rn-hero', onMouseEnter: pause, onMouseLeave: resume, onFocus: pause, onBlur: resume },
+    return h('section', { ref: section, className: 'rn-hero' },
       h('div', { className: 'rn-hero-field rn-on-navy' },
         props.header || null,
+        props.map ? h(HeroMap, { map: props.map, country: countries[index] }) : null,
         h('div', { className: 'rn-hero-body' },
-          h('h1', { className: 'rn-hero-title', 'aria-label': lead + ' ' + listToSentence(countries) },
+          h('h1', { className: 'rn-hero-title', 'aria-label': lead + ' ' + listToSentence(countries), onMouseEnter: pause, onMouseLeave: resume },
             h('span', { className: 'rn-hero-line', 'aria-hidden': 'true' },
               leadWords.join(' '), ' ', h('span', { className: 'rn-hero-lead-end' }, leadEnd)),
             h('span', { className: 'rn-hero-line rn-hero-word', 'aria-hidden': 'true', style: { '--rn-letters': countries[index].length } },
               h('span', { className: 'rn-hero-lead-end-next' }, leadEnd + ' '),
               h('span', { key: index, className: 'rn-hero-country' }, countries[index]))),
-          props.photoSrc ? h(Sticker, { className: 'rn-hero-sticker-a', text: props.ring || 'Rumbo Norte · Trabajo en Europa · ', photoSrc: props.photoSrc }) : null,
+          props.photoSrc ? h(Sticker, { className: 'rn-hero-sticker-a', text: props.ring || 'Rumbo Norte, trabajo en Europa', photoSrc: props.photoSrc }) : null,
           props.person ? h('p', { className: 'rn-hero-person' },
             h('strong', null, props.person.name), h('span', null, props.person.role)) : null,
           props.subtitle ? h('p', { className: 'rn-hero-sub' }, props.subtitle) : null,
@@ -170,8 +265,7 @@
             props.primaryCta ? h(Button, { href: props.primaryCta.href }, props.primaryCta.label) : null,
             props.secondaryCta ? h(Button, { href: props.secondaryCta.href, variant: 'outline' }, props.secondaryCta.label) : null),
           props.note ? h('p', { className: 'rn-hero-note' }, props.note) : null),
-        h(Curve),
-        props.markSrc ? h(Sticker, { className: 'rn-hero-sticker-b', text: countries.join(' · ') + ' · ', src: props.markSrc }) : null),
+        h(Curve)),
       props.promises ? h('ul', { className: 'rn-hero-promises' },
         props.promises.map(function (p) { return h('li', { key: p }, p); })) : null,
       props.logos ? h(LogoStrip, { logos: props.logos }) : null);
@@ -492,34 +586,29 @@
       props.note ? h(Note, { note: props.note }) : null));
   }
 
-  // Trazo en zigzag que descubre las líneas, como si alguien las fuera dibujando.
-  var SCRIBBLE = 'M-60 40L1260-30L-60 170L1260 100L-60 300L1260 230L-60 430L1260 360L-60 560L1260 490L-60 690L1260 620L-60 820L1260 750L-60 900L1260 860';
-
-  function JobArt(props) {
-    var id = React.useId().replace(/:/g, '');
-    var spot = props.spot || [50, 50];
-    return h('div', { className: 'rn-job-plate', 'aria-hidden': 'true', style: { '--rn-ax': spot[0] + '%', '--rn-ay': spot[1] + '%' } },
-      h('img', { className: 'rn-job-ghost', src: props.lines, alt: '', width: 1200, height: 800, loading: 'lazy' }),
-      props.near ? h('svg', { className: 'rn-job-draw', viewBox: '0 0 1200 800' },
-        h('defs', null, h('mask', { id: id }, h('path', { className: 'rn-job-scribble', d: SCRIBBLE, pathLength: 1 }))),
-        h('image', { href: props.lines, width: 1200, height: 800, mask: 'url(#' + id + ')' })) : null,
-      h('img', { className: 'rn-job-accent', src: props.accent, alt: '', width: 1200, height: 800, loading: 'lazy' }));
+  // Foto de cada perfil. En el acordeón, el panel cerrado enseña una franja de la foto centrada en el
+  // trabajador (focus, en %) y al abrirse se ve entera. Son imágenes ilustrativas y lo dicen.
+  function JobPhoto(props) {
+    var f = props.focus || [50, 50];
+    return h('div', { className: 'rn-job-plate', 'aria-hidden': 'true' },
+      h('img', {
+        src: props.photo + '.webp', srcSet: props.photo + '-800.webp 800w, ' + props.photo + '.webp 1536w',
+        sizes: '(max-width: 1040px) min(84vw, 460px), 760px', alt: '', width: 1536, height: 1024,
+        loading: 'lazy', decoding: 'async', style: { objectPosition: f[0] + '% ' + f[1] + '%' }
+      }),
+      h('span', { className: 'rn-job-note' }, 'Imagen ilustrativa'));
   }
 
   function Profiles(props) {
     var items = props.items || [];
     var aState = React.useState(0), active = aState[0], setActive = aState[1];
-    var nState = React.useState(false), near = nState[0], setNear = nState[1];
     var tState = React.useState(false), touched = tState[0], setTouched = tState[1];
     var rail = React.useRef(null), seen = React.useRef(false), stopped = React.useRef(false);
 
     React.useEffect(function () {
       var el = rail.current;
-      if (!window.IntersectionObserver) { setNear(true); return undefined; }
+      if (!window.IntersectionObserver) return undefined;
       var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var loading = new IntersectionObserver(function (e) {
-        if (e[0].isIntersecting) { setNear(true); loading.disconnect(); }
-      }, { rootMargin: '600px 0px' });
       var view = new IntersectionObserver(function (e) { seen.current = e[0].isIntersecting; }, { threshold: .5 });
       // En móvil se desliza con el dedo: manda la tarjeta que queda centrada.
       var swipe = new IntersectionObserver(function (entries) {
@@ -528,13 +617,12 @@
           if (e.isIntersecting) setActive(Array.prototype.indexOf.call(el.children, e.target));
         });
       }, { root: el, threshold: .7 });
-      loading.observe(el);
       view.observe(el);
       Array.prototype.forEach.call(el.children, function (c) { swipe.observe(c); });
       var timer = calm ? 0 : setInterval(function () {
         if (seen.current && !stopped.current && el.scrollWidth <= el.clientWidth + 1) setActive(function (i) { return (i + 1) % items.length; });
       }, 5000);
-      return function () { loading.disconnect(); view.disconnect(); swipe.disconnect(); clearInterval(timer); };
+      return function () { view.disconnect(); swipe.disconnect(); clearInterval(timer); };
     }, []);
 
     function pick(i) {
@@ -548,7 +636,7 @@
       h('ul', { className: cx('rn-jobs', !touched && 'is-auto'), ref: rail }, items.map(function (p, i) {
         var on = i === active;
         return h('li', { key: p.id, className: cx('rn-job', on && 'is-on'), onMouseEnter: function () { pick(i); } },
-          h(JobArt, { lines: p.lines, accent: p.accent, spot: (window.RumboNorteTrabajos || {})[p.id], near: near }),
+          h(JobPhoto, { photo: p.photo, focus: p.focus }),
           h('button', { type: 'button', className: 'rn-job-hit', 'aria-label': p.short + ': ' + p.title, 'aria-pressed': on, onFocus: function () { pick(i); }, onClick: function () { pick(i); } },
             h('span', { className: 'rn-job-label' }, p.short)),
           h('div', { className: 'rn-job-body' },
@@ -712,6 +800,15 @@
       });
     }
 
+    // Tras un intento de envío, cada aviso desaparece en cuanto su campo queda bien.
+    function recheck() {
+      var names = Object.keys(errors);
+      if (!names.length) return;
+      var e = check(new FormData(ref.current)), next = {};
+      names.forEach(function (k) { if (e[k]) next[k] = e[k]; });
+      if (Object.keys(next).length !== names.length) setErrors(next);
+    }
+
     function input(name, extra) {
       var error = errors[name];
       return Object.assign({
@@ -737,7 +834,7 @@
         props.whatsapp ? h('div', { className: 'rn-apply-wa' },
           h(Button, { href: 'wa:', variant: 'solid', icon: 'whatsapp' }, props.whatsapp.label),
           h('p', { className: 'rn-fine' }, props.whatsapp.note)) : null),
-      h('form', { ref: ref, className: 'rn-form', name: form.name, method: 'POST', action: form.action, noValidate: live, onSubmit: live ? submit : null },
+      h('form', { ref: ref, className: 'rn-form', name: form.name, method: 'POST', action: form.action, noValidate: live, onSubmit: live ? submit : null, onChange: live ? recheck : null },
         h('input', { type: 'hidden', name: 'form-name', value: form.name }),
         h('input', { type: 'hidden', name: 'subject', value: form.subject }),
         h('p', { className: 'rn-form-trap', 'aria-hidden': 'true' },

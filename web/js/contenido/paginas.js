@@ -5,7 +5,7 @@ window.RumboNortePaginas = {
     path: '/',
     title: 'Rumbo Norte — Trabajo en Países Bajos, Bélgica y Alemania, gratis para el candidato',
     description: 'Soy Iván, reclutador independiente. Selecciono candidatos en España para agencias de trabajo temporal certificadas de Países Bajos, Bélgica y Alemania, y antes te explico el neto real, el alojamiento y cómo verificar la agencia. Gratis para ti.',
-    content: ['trabajos', 'inicio'],
+    content: ['inicio'],
     priority: '1.0'
   },
   guia: {

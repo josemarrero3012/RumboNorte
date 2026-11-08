@@ -2,6 +2,7 @@
 window.RumboNorteContenido = window.RumboNorteContenido || {};
 window.RumboNorteContenido.comun = {
   header: {
+    markSrc: 'assets/logos/rumbo-norte-mark-reversed.webp',
     logoSrc: 'assets/logos/rumbo-norte-wordmark-reversed.webp',
     homeHref: './',
     links: [
@@ -39,7 +40,7 @@ window.RumboNorteContenido.comun = {
         ]
       }
     ],
-    copy: '© 2026 Rumbo Norte · proyectoholanda.com',
+    copy: '© 2026 Rumbo Norte',
     legal: [
       { label: 'Impressum', href: 'impressum.html' },
       { label: 'Política de privacidad', href: 'privacidad.html' },

@@ -76,7 +76,8 @@ export async function mount() {
   const state = { len: 0 };
   function paint() {
     const l = Math.max(0, Math.min(total, state.len));
-    path.style.strokeDashoffset = total - l;
+    // La línea acaba dentro de la punta: si llegara al vértice, su extremo redondeado asomaría por delante.
+    path.style.strokeDashoffset = total - Math.max(0, l - 9);
     const p = path.getPointAtLength(l), q = path.getPointAtLength(Math.max(0, l - 4));
     const angle = Math.atan2(p.y - q.y, p.x - q.x) * 180 / Math.PI;
     tip.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(${l > 4 ? angle : 90})`);

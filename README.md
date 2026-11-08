@@ -24,7 +24,7 @@ Sin dependencias que instalar. React 18 se carga como archivo, sin compilador, y
 
 - **La maqueta de los países:** Three.js. Las placas se modelan por código en Blender, con la luz horneada en cada una.
 - **Las animaciones:** GSAP con ScrollTrigger. Son el camino naranja del inicio, la nómina que se va descontando en la guía y el flujo del dinero.
-- **Las ilustraciones de los trabajos:** se separan en líneas y acento naranja para animarlas por capas.
+- **Los perfiles de trabajo:** fotos ilustrativas en un acordeón; cada panel cerrado enseña una franja de su foto y al abrirse se ve entera.
 
 ## Probarla en local
 
@@ -38,13 +38,20 @@ python3 dev.py
 
 Se abre en http://localhost:4321 y se recarga sola al guardar.
 
+Si el sistema no tiene Node o Chromium, pueden ir portátiles en `.tools/` (no se sube al repositorio): Node LTS de nodejs.org en `.tools/node-*`, Chrome for Testing en `.tools/chrome-linux64` y en `.tools/bin` los accesos `node`, `npm` y `chromium`. Se usan anteponiéndolos al `PATH`:
+
+```bash
+export PATH="$PWD/.tools/bin:$PATH"
+node build.mjs && node herramientas/revisar.mjs
+```
+
 | Comando | Uso |
 | --- | --- |
 | `python3 dev.py` | Servidor de desarrollo con recarga automática |
 | `node build.mjs` | Genera en `dist/` la versión para Netlify |
 | `BASE=/RumboNorte node build.mjs` | Genera la demo de GitHub Pages, en esa subcarpeta y sin indexar |
 | `node herramientas/revisar.mjs` | Revisa `dist/`: textos, enlaces, cuatro anchos de pantalla, consola, formulario y vista sin JavaScript. Necesita Chromium |
-| `python3 herramientas/preparar_trabajos.py` | Prepara las imágenes de los trabajos desde `originales/trabajos/` |
+| `python3 herramientas/mapa_europa.py` | Dibuja el mapa de Europa del inicio en `web/assets/mapa/europa.svg` e indica dónde van las chinchetas |
 
 ## Organización
 

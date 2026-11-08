@@ -30,6 +30,7 @@ const STEPS = 120;
 const ROAD_W = 0.15;
 const ROAD_REST = 0.72;
 const CONTOURS = 32;
+const MIN_RUN = 11;
 
 function inside(poly, x, y) {
   let c = false;
@@ -107,6 +108,22 @@ function trimToShore(pos, poly) {
   for (let i = 0; i < outside; i++) { pos.setXYZ(i * 2, first[0], 0, first[1]); pos.setXYZ(i * 2 + 1, first[0], 0, first[1]); }
 }
 
+// Silueta para el trazo: el contorno de Natural Earth trae ondulaciones diminutas que una línea fina
+// exagera. Suavizado de Taubin (un paso que encoge y otro que devuelve el tamaño): quita el temblor
+// sin mover el contorno más de una fracción de píxel respecto al borde de la placa.
+function smooth(poly, rounds = 6) {
+  let p = poly.map(([x, y]) => [x, y]);
+  const n = p.length;
+  for (let r = 0; r < rounds * 2; r++) {
+    const k = r % 2 ? -0.53 : 0.5;
+    p = p.map(([x, y], i) => {
+      const [ax, ay] = p[(i + n - 1) % n], [bx, by] = p[(i + 1) % n];
+      return [x + k * ((ax + bx) / 2 - x), y + k * ((ay + by) / 2 - y)];
+    });
+  }
+  return p;
+}
+
 function rim(poly, ink) {
   const p = [];
   poly.forEach(([x, y], i) => {
@@ -127,12 +144,28 @@ function contour(poly, ink) {
   return {
     line,
     update(eye) {
-      let k = 0, was = facing(n - 1, eye.x, -eye.z);
-      for (let i = 0; i < n && k < CONTOURS; i++) {
-        const is = facing(i, eye.x, -eye.z);
-        if (is !== was) { const [x, y] = poly[i]; buffer.array.set([x, 0, -y, x, -THICK, -y], k++ * 6); }
-        was = is;
+      // Los tramos que miran hacia un lado durante muy poco (una ondulación de la costa) no cuentan:
+      // así solo aparecen las aristas de los giros reales de la pared.
+      const f = poly.map((_, i) => facing(i, eye.x, -eye.z));
+      const runs = [];
+      f.forEach((v, i) => { if (!runs.length || runs[runs.length - 1].v !== v) runs.push({ v, at: i, len: 1 }); else runs[runs.length - 1].len++; });
+      if (runs.length > 1 && runs[0].v === runs[runs.length - 1].v) { const last = runs.pop(); runs[0].len += last.len; runs[0].at = last.at; }
+      for (let changed = true; changed && runs.length > 2;) {
+        changed = false;
+        const i = runs.reduce((m, r, j) => (r.len < runs[m].len ? j : m), 0);
+        if (runs[i].len < MIN_RUN) {
+          const a = (i + runs.length - 1) % runs.length, b = (i + 1) % runs.length;
+          runs[a].len += runs[i].len + runs[b].len;
+          runs.splice(Math.max(i, b), 1); runs.splice(Math.min(i, b), 1);
+          changed = true;
+        }
       }
+      let k = 0;
+      if (runs.length > 1) runs.forEach((r) => {
+        if (k >= CONTOURS) return;
+        const [x, y] = poly[((r.at % n) + n) % n];
+        buffer.array.set([x, 0, -y, x, -THICK, -y], k++ * 6);
+      });
       g.instanceCount = k;
       buffer.needsUpdate = true;
     },
@@ -234,7 +267,8 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
     Promise.all(ids.map((id) => new THREE.TextureLoader().loadAsync(`${BASE}luz-${id}.webp`))),
   ]);
 
-  const ink = new LineMaterial({ color: INK, linewidth: 1.4, alphaToCoverage: true });
+  // Sin alphaToCoverage: con él, el borde del trazo salía moteado; el antialiasing del lienzo basta.
+  const ink = new LineMaterial({ color: INK, linewidth: 1.5 });
 
   const islands = ids.map((id, i) => {
     const map = maps[i];
@@ -246,9 +280,10 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
     root.traverse((o) => { if (o.isMesh) o.material = material; });
     const group = new THREE.Group();
     const road = roadMesh(ROADS[id], outlines[id]);
-    const edges = contour(outlines[id], ink);
+    const line = smooth(outlines[id]);
+    const edges = contour(line, ink);
     const flag = flagMesh(FLAGS[id]);
-    group.add(root, road, rim(outlines[id], ink), edges.line, flag.group);
+    group.add(root, road, rim(line, ink), edges.line, flag.group);
     world.add(group);
     const shadow = new THREE.Mesh(
       new THREE.PlaneGeometry(4.4, 4.4),
@@ -283,7 +318,9 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
     size.h = Math.max(1, r.height);
     const a = size.w / size.h;
     size.tall = a < 1.05;
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, size.w < 700 ? 1.75 : 2));
+    // Se pinta al doble de la pantalla y el navegador lo reduce: así las líneas finas quedan suaves
+    // aunque no haya antialiasing por hardware o la escala sea fraccionaria (1,25 o 1,5 en muchos portátiles).
+    renderer.setPixelRatio(Math.min((devicePixelRatio || 1) * 2, size.w < 700 ? 2 : 2.5));
     renderer.setSize(size.w, size.h, false);
     renderer.domElement.style.width = '100%';
     renderer.domElement.style.height = '100%';
@@ -444,7 +481,8 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
     spring(cam.x, f ? f.group.position.x + shot.slide : 0, dt, 26, 9);
     spring(cam.z, f ? f.group.position.z + shot.shift : size.look, dt, 26, 9);
     spring(cam.zoom, f ? shot.zoom : 1, dt, 26, 9);
-    ink.linewidth = (size.tall ? 1.15 : 1.4) * (1 + (1 / cam.zoom.x - 1) * 0.5);
+    // Grosor en píxeles CSS, el mismo en cualquier pantalla; la línea se mide en píxeles del lienzo.
+    ink.linewidth = (size.tall ? 1 : 1.2) * (1 + (1 / cam.zoom.x - 1) * 0.5) * renderer.getPixelRatio();
     const fly = calm ? 0 : (state.progress - 0.5) * 0.14;
     const a = TILT + fly, d = size.dist * cam.zoom.x;
     camera.position.set(cam.x.x + px * 0.12, Math.sin(a) * d, cam.z.x + Math.cos(a) * d + py * 0.1);
@@ -464,7 +502,7 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
 
     camera.updateMatrixWorld();
     islands.forEach((n) => {
-      n.flag.uniforms.line.value = ink.linewidth * renderer.getPixelRatio();
+      n.flag.uniforms.line.value = ink.linewidth * 1.15;
       n.group.updateWorldMatrix(true, false);
       n.edges.update(n.group.worldToLocal(eye.copy(camera.position)));
       const a2 = anchors[n.id];

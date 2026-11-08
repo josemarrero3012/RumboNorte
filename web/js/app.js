@@ -92,14 +92,26 @@
   else ReactDOM.createRoot(root).render(BUILD[name]());
 
   // Animaciones con GSAP, cuando la página ya ha cargado: el camino del inicio, solo en pantallas
-  // anchas donde hay margen para él, la nómina de la guía y el flujo del dinero.
+  // anchas donde hay margen para él, el vuelo del hero, los pasos del proceso, las cifras que cuentan,
+  // los titulares de sección, los desplegables, los remates de cada sección, el progreso del formulario,
+  // la barra de lectura de la guía, el recorrido de Metas, la nómina de la guía y el flujo del dinero.
   function later(file) {
     window.addEventListener('load', function () {
       import(new URL(file, document.baseURI).href).then(function (m) { return m.mount(); })
         .catch(function (e) { console.warn('Animación no disponible', e); });
     });
   }
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (name === 'inicio' && window.matchMedia('(min-width: 1360px)').matches) later('js/camino.js');
+  if (name === 'inicio' && !calm) later('js/heroe.js');
+  if (name === 'inicio' && !calm) later('js/proceso.js');
+  if ((name === 'inicio' || name === 'metas') && !calm) later('js/cifras.js');
+  if (!calm) later('js/titulos.js');
+  if (!calm) later('js/desplegables.js');
+  if (!calm) later('js/detalles.js');
+  if (name === 'inicio') later('js/candidatura.js');
+  if (name === 'guia' && !calm) later('js/lectura.js');
+  if (name === 'metas' && !calm) later('js/recorrido.js');
   if (name === 'guia') later('js/nomina.js');
   if (name === 'inicio' || name === 'quien') later('js/flujo.js');
 })();

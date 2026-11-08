@@ -6,7 +6,7 @@ import json, math, os
 import numpy as np
 
 EXT, PX = 1.9, 420      # lienzo: medio ancho en unidades y pixeles por unidad
-SIGMA, STEP = .028, .022  # suavizado y separacion entre puntos, en unidades
+SIGMA, STEP = .08, .014  # suavizado y separacion entre puntos, en unidades (más suave: sin las ondulaciones de la costa)
 H = os.path.dirname(os.path.abspath(__file__))
 t = json.load(open(f'{H}/datos/countries-50m.json'))
 sc, tr = t['transform']['scale'], t['transform']['translate']

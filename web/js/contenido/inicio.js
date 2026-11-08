@@ -2,19 +2,30 @@
 window.RumboNorteContenido = window.RumboNorteContenido || {};
 window.RumboNorteContenido.inicio = {
   hero: {
-    subtitle: 'El sueldo neto, el alojamiento y las condiciones, antes de decidir. Te ayudo a dar el paso con información clara y los números delante.',
-    note: 'En español. Sin coste para ti.',
+    subtitle: 'Antes de hacer la maleta sabrás cuánto vas a cobrar, cuánto pagarás por la habitación y cuánto te quedará limpio. Después te presento a una agencia certificada.',
+    note: 'En español, de tú a tú y sin coste para ti.',
     primaryCta: { label: 'Enviar mi candidatura', href: '#candidatura' },
     secondaryCta: { label: 'Así funciona', href: '#proceso' },
-    ring: 'De España al norte de Europa · ',
+    ring: 'De España al norte de Europa',
     promises: [
       'Gratis para el candidato, siempre',
       'Agencias de trabajo temporal certificadas',
       'Información con fuentes oficiales'
     ],
     person: { name: 'Soy Iván', role: 'Tu reclutador en Rumbo Norte' },
-    photoSrc: 'assets/fotos/ivan-retrato-sello.webp',
-    markSrc: 'assets/logos/rumbo-norte-mark.webp',
+    photoSrc: 'assets/fotos/ivan-retrato.webp',
+    // Mapa del hero: lo dibuja herramientas/mapa_europa.py, que también da estas posiciones.
+    map: {
+      src: 'assets/mapa/europa.svg',
+      width: 1000,
+      height: 1073,
+      origin: [177, 843],
+      places: [
+        { name: 'Países Bajos', id: 'nl', pin: [458, 443] },
+        { name: 'Alemania', id: 'de', pin: [561, 490] },
+        { name: 'Bélgica', id: 'be', pin: [432, 502] }
+      ]
+    },
     logos: [
       { name: 'OTTO Workforce', src: 'assets/empresas/otto-workforce.webp', width: 120, height: 44 },
       { name: 'Covebo', src: 'assets/empresas/covebo.webp', width: 168, height: 30 },
@@ -241,8 +252,8 @@ window.RumboNorteContenido.inicio = {
       {
         eyebrow: 'Logística',
         id: 'almacen',
-        lines: 'assets/trabajos/almacen-lineas.webp',
-        accent: 'assets/trabajos/almacen-acento.webp',
+        photo: 'assets/perfiles/almacen',
+        focus: [41, 45],
         short: 'Almacén',
         title: 'Almacén y preparación de pedidos',
         text: 'Preparar pedidos (*orderpicking*), cargar y descargar, escanear mercancía. Es la entrada más habitual. No hace falta experiencia; sí aguantar turnos y muchas horas de pie.'
@@ -250,8 +261,8 @@ window.RumboNorteContenido.inicio = {
       {
         eyebrow: 'Logística',
         id: 'carretilla',
-        lines: 'assets/trabajos/carretilla-lineas.webp',
-        accent: 'assets/trabajos/carretilla-acento.webp',
+        photo: 'assets/perfiles/carretilla',
+        focus: [34, 40],
         short: 'Carretilla',
         title: 'Carretilleros y retráctil',
         text: 'El perfil más buscado del almacén y de los mejor pagados. Si has llevado carretilla o *reachtruck*, dímelo desde el principio. Allí suelen pedir el certificado neerlandés, y muchas agencias te lo pagan.'
@@ -259,8 +270,8 @@ window.RumboNorteContenido.inicio = {
       {
         eyebrow: 'Industria',
         id: 'alimentacion',
-        lines: 'assets/trabajos/alimentacion-lineas.webp',
-        accent: 'assets/trabajos/alimentacion-acento.webp',
+        photo: 'assets/perfiles/alimentacion',
+        focus: [31, 45],
         short: 'Alimentación',
         title: 'Producción alimentaria',
         text: 'Líneas de envasado, control de producto y limpieza de línea. Se trabaja a turnos, muchas veces en frío, y hay movimiento todo el año.'
@@ -268,8 +279,8 @@ window.RumboNorteContenido.inicio = {
       {
         eyebrow: 'Campo',
         id: 'invernaderos',
-        lines: 'assets/trabajos/invernaderos-lineas.webp',
-        accent: 'assets/trabajos/invernaderos-acento.webp',
+        photo: 'assets/perfiles/invernaderos',
+        focus: [45, 45],
         short: 'Invernaderos',
         title: 'Agricultura e invernaderos',
         text: 'Cosecha, plantación y clasificación. Va muy por temporadas, con picos claros y meses flojos, así que conviene saber las fechas antes de comprar el billete.'
@@ -277,8 +288,8 @@ window.RumboNorteContenido.inicio = {
       {
         eyebrow: 'Servicios',
         id: 'limpieza',
-        lines: 'assets/trabajos/limpieza-lineas.webp',
-        accent: 'assets/trabajos/limpieza-acento.webp',
+        photo: 'assets/perfiles/limpieza',
+        focus: [38, 45],
         short: 'Limpieza',
         title: 'Limpieza industrial',
         text: 'Limpieza de fábricas, naves y plantas de producción. Mucho turno de noche y de fin de semana.'
@@ -286,8 +297,8 @@ window.RumboNorteContenido.inicio = {
       {
         eyebrow: 'Oficios',
         id: 'construccion',
-        lines: 'assets/trabajos/construccion-lineas.webp',
-        accent: 'assets/trabajos/construccion-acento.webp',
+        photo: 'assets/perfiles/construccion',
+        focus: [68, 40],
         short: 'Construcción',
         title: 'Construcción y metal',
         text: 'Soldadores, montadores, electricistas. Aquí sí piden experiencia que se pueda demostrar y, a veces, certificados como el VCA de seguridad.'

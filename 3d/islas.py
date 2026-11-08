@@ -6,6 +6,7 @@ Despues del horneado, exportar.py pasa los modelos y la luz a la web.
 import json, math, os, sys
 import bpy, bmesh
 from mathutils import Matrix, Vector
+from mathutils.geometry import tessellate_polygon
 
 H = os.path.dirname(os.path.abspath(__file__))
 MODE = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else 'preview'
@@ -69,10 +70,17 @@ def placa(name, mats):
             loop[uv].uv = c
     x0, y0 = min(p[0] for p in pts), min(p[1] for p in pts)
     s = .93 / max(max(p[0] for p in pts) - x0, max(p[1] for p in pts) - y0)
-    cap = bm.faces.new(top)
-    for loop in cap.loops:
-        loop[uv].uv = (.01 + (loop.vert.co.x - x0) * s, .06 + (loop.vert.co.y - y0) * s)
-    bmesh.ops.triangulate(bm, faces=bm.faces)
+    walls = list(bm.faces)
+    # La tapa, triangulada aqui: el triangulador de bmesh en Blender 5 rellenaba por fuera de las bahias
+    # (triangulos fuera de la costa que salian negros en la web). tessellate_polygon no lo hace.
+    for t in tessellate_polygon([[v.co for v in top]]):
+        a, b, c = (pts[i] for i in t)
+        if (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]) < 0:
+            t = t[::-1]
+        cap = bm.faces.new([top[i] for i in t])
+        for loop in cap.loops:
+            loop[uv].uv = (.01 + (loop.vert.co.x - x0) * s, .06 + (loop.vert.co.y - y0) * s)
+    bmesh.ops.triangulate(bm, faces=walls)
     return mesh_object(f'base_{name}', bm, mats)
 
 

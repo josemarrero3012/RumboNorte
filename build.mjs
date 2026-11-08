@@ -17,7 +17,7 @@ const escape = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').r
 
 const BASE = ['lib/react.js', 'lib/react-dom.js', 'js/config.js', 'js/bundle.js', 'js/contenido/paginas.js', 'js/contenido/comun.js'];
 const CSS = ['css/fuentes.css', 'css/tokens.css', 'css/bundle.css', 'css/site.css'];
-const CONTENT = ['trabajos', 'inicio', 'guia', 'metas', 'quien', 'legal'].map((c) => `js/contenido/${c}.js`);
+const CONTENT = ['inicio', 'guia', 'metas', 'quien', 'legal'].map((c) => `js/contenido/${c}.js`);
 const IMPORT_MAP = '{"imports":{"three":"./lib/three/three.module.min.js"}}';
 const NOSCRIPT = '.rn-country[hidden]{display:block}.rn-country{animation:none}.rn-jobs{display:block;height:auto}.rn-job{margin-bottom:12px}.rn-job .rn-job-plate,.rn-job .rn-job-body{position:static;width:auto;margin:0;opacity:1}.rn-job-hit{display:none}';
 
@@ -36,7 +36,7 @@ mkdirSync(join(DIST, 'lib'), { recursive: true });
 cpSync(join(WEB, 'assets'), join(DIST, 'assets'), { recursive: true });
 cpSync(join(WEB, 'lib/three'), join(DIST, 'lib/three'), { recursive: true });
 cpSync(join(WEB, 'js/paises-3d.js'), join(DIST, 'js/paises-3d.js'));
-for (const f of ['camino.js', 'nomina.js', 'flujo.js', 'gsap.js']) cpSync(join(WEB, 'js', f), join(DIST, 'js', f));
+for (const f of ['camino.js', 'heroe.js', 'proceso.js', 'cifras.js', 'titulos.js', 'desplegables.js', 'detalles.js', 'candidatura.js', 'lectura.js', 'recorrido.js', 'nomina.js', 'flujo.js', 'gsap.js']) cpSync(join(WEB, 'js', f), join(DIST, 'js', f));
 cpSync(join(WEB, 'lib/gsap'), join(DIST, 'lib/gsap'), { recursive: true });
 
 function emit(name, ext, text) {
