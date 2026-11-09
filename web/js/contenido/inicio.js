@@ -276,7 +276,7 @@ window.RumboNorteContenido.inicio = {
         eyebrow: 'Transporte',
         id: 'camion',
         photo: 'assets/perfiles/camion',
-        focus: [50, 50],
+        focus: [60, 35],
         short: 'Camión',
         title: 'Conductores de camión',
         text: 'Rutas nacionales e internacionales, distribución y reparto. Es uno de los perfiles con más vacantes. Se pide carnet C o C+E en vigor, el CAP (código 95) y tarjeta de tacógrafo. Cuánta experiencia piden depende de la agencia y del puesto.'
@@ -285,7 +285,7 @@ window.RumboNorteContenido.inicio = {
         eyebrow: 'Transporte',
         id: 'autobus',
         photo: 'assets/perfiles/autobus',
-        focus: [50, 50],
+        focus: [32, 32],
         short: 'Autobús',
         title: 'Conductores de autobús',
         text: 'Transporte urbano, interurbano y de empresa. Es uno de los perfiles con más vacantes. Se pide carnet D en vigor y el CAP (código 95). Los requisitos exactos dependen de la agencia y del puesto.'
