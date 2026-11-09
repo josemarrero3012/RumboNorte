@@ -96,7 +96,6 @@ Antes de publicar la versión definitiva:
 - Revisión de los textos legales tras el cambio de marca.
 - Confirmar que siguen vigentes las cifras de nómina, alojamiento y costes.
 - Probar en un teléfono real.
-- Fotos de los perfiles de camión y autobús: ahora llevan una imagen provisional (`web/assets/perfiles/camion*.webp` y `autobus*.webp`).
 - Confirmar con las agencias los requisitos de los conductores (carnet C/C+E o D, CAP y tacógrafo).
 - Revisar el salario mínimo neerlandés en julio de 2027 (15,29 €/h desde el 1 de enero de 2027), en el proceso del inicio y en la guía.
 
