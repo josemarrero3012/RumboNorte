@@ -1,4 +1,4 @@
-/* @ds-bundle: {"format":4,"namespace":"RumboNorte","components":[{"name":"Button"},{"name":"Sticker"},{"name":"Header"},{"name":"LogoStrip"},{"name":"Hero"},{"name":"TopicCards"},{"name":"KeyFacts"},{"name":"Countries"},{"name":"Services"},{"name":"Profiles"},{"name":"Process"},{"name":"Faq"},{"name":"MoneyFlow"},{"name":"GuideCallout"},{"name":"Application"},{"name":"Footer"},{"name":"PageHero"},{"name":"Article"},{"name":"Reading"},{"name":"Goals"},{"name":"Story"},{"name":"Limits"},{"name":"Cta"},{"name":"LegalPage"}]} */
+/* @ds-bundle: {"format":4,"namespace":"RumboNorte","components":[{"name":"Button"},{"name":"Sticker"},{"name":"Header"},{"name":"LogoStrip"},{"name":"Hero"},{"name":"TopicCards"},{"name":"KeyFacts"},{"name":"Countries"},{"name":"Services"},{"name":"Profiles"},{"name":"Process"},{"name":"Faq"},{"name":"MoneyFlow"},{"name":"GuideCallout"},{"name":"Application"},{"name":"Footer"},{"name":"WhatsAppOrb"},{"name":"PageHero"},{"name":"Article"},{"name":"Reading"},{"name":"Goals"},{"name":"Story"},{"name":"Limits"},{"name":"Cta"},{"name":"LegalPage"}]} */
 (function () {
   var React = window.React;
   var h = React.createElement;
@@ -925,6 +925,13 @@
         })))));
   }
 
+  // Botón flotante de WhatsApp, abajo a la derecha en todas las páginas. Funciona sin JavaScript;
+  // js/asistente.js pone encima el orbe del asistente y aparta los dos al llegar al final del pie.
+  function WhatsAppOrb(props) {
+    return h('a', Object.assign({ className: 'rn-wa-orb', 'aria-label': (props && props.label) || 'Escribir a Iván por WhatsApp' }, linkProps('wa:')),
+      h('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' }, h('path', { d: ICONS.whatsapp })));
+  }
+
   // ---- Páginas interiores
   function PageHero(props) {
     return h('section', { className: 'rn-pagehero' },
@@ -1041,5 +1048,5 @@
       h('div', { className: 'rn-prose' }, h(Blocks, { blocks: props.blocks }))));
   }
 
-  window.RumboNorte = Object.assign(window.RumboNorte || {}, { Button: Button, Sticker: Sticker, Header: Header, LogoStrip: LogoStrip, Hero: Hero, TopicCards: TopicCards, KeyFacts: KeyFacts, Countries: Countries, Services: Services, Profiles: Profiles, Process: Process, Faq: Faq, MoneyFlow: MoneyFlow, GuideCallout: GuideCallout, Application: Application, Footer: Footer, PageHero: PageHero, Article: Article, Reading: Reading, Goals: Goals, Story: Story, Limits: Limits, Cta: Cta, LegalPage: LegalPage, Note: Note, Blocks: Blocks });
+  window.RumboNorte = Object.assign(window.RumboNorte || {}, { Button: Button, Sticker: Sticker, Header: Header, LogoStrip: LogoStrip, Hero: Hero, TopicCards: TopicCards, KeyFacts: KeyFacts, Countries: Countries, Services: Services, Profiles: Profiles, Process: Process, Faq: Faq, MoneyFlow: MoneyFlow, GuideCallout: GuideCallout, Application: Application, Footer: Footer, WhatsAppOrb: WhatsAppOrb, PageHero: PageHero, Article: Article, Reading: Reading, Goals: Goals, Story: Story, Limits: Limits, Cta: Cta, LegalPage: LegalPage, Note: Note, Blocks: Blocks });
 })();

@@ -16,6 +16,8 @@ Sustituye a la versión anterior, [Norte-Claro](https://github.com/josemarrero30
 - **Quién soy:** la historia de Iván y lo que no hace.
 - **Legales:** privacidad e Impressum en español y alemán, más la página de gracias y la 404.
 
+- **Botones flotantes:** WhatsApp y, encima, la brújula: un asistente que responde con lo que cuenta la web (fichas en `web/js/asistente-datos.js`) y comprueba en un minuto los tres requisitos. Funciona sin servidor.
+
 Pensada primero para móvil. Cada página llega ya pintada en HTML, así que se lee entera sin JavaScript, y el formulario sigue enviando. Las animaciones respetan el movimiento reducido.
 
 ## Con qué está hecha

@@ -11,7 +11,8 @@
     return h(React.Fragment, null,
       h(hero[0], Object.assign({}, hero[1], { header: header(path) })),
       h('main', { id: 'contenido' }, sections),
-      h(R.Footer, Object.assign({}, C.comun.footer, footer)));
+      h(R.Footer, Object.assign({}, C.comun.footer, footer)),
+      h(R.WhatsAppOrb, null));
   }
 
   function section(component, props, key) {
@@ -113,4 +114,6 @@
   if (name === 'guia' && !calm) later('js/lectura.js');
   if (name === 'metas' && !calm) later('js/recorrido.js');
   if (name === 'guia') later('js/nomina.js');
+  // El asistente (la brújula) va en todas las páginas, encima del botón de WhatsApp.
+  later('js/asistente.js');
 })();
