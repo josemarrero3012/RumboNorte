@@ -5,7 +5,7 @@ window.RumboNorteContenido.inicio = {
     // Países Bajos fijo en el titular: es donde está la gran mayoría de las vacantes.
     countries: ['Países Bajos'],
     also: 'También vacantes en Bélgica y Alemania.',
-    subtitle: 'Antes de hacer la maleta sabrás cuánto vas a cobrar, cuánto pagarás por la habitación y cuánto te quedará limpio. Después te presento a una agencia certificada.',
+    subtitle: 'Antes de hacer la maleta te explico, con cifras orientativas, cuánto se suele cobrar, cuánto cuesta la habitación y cuánto te puede quedar limpio. Si pasas la entrevista, te asigno vacantes de agencias certificadas.',
     note: 'En español, de tú a tú y sin coste para ti.',
     primaryCta: { label: 'Enviar mi candidatura', href: '#candidatura' },
     secondaryCta: { label: 'Así funciona', href: '#proceso' },
