@@ -2,6 +2,9 @@
 window.RumboNorteContenido = window.RumboNorteContenido || {};
 window.RumboNorteContenido.inicio = {
   hero: {
+    // Países Bajos fijo en el titular: es donde está la gran mayoría de las vacantes.
+    countries: ['Países Bajos'],
+    also: 'También vacantes en Bélgica y Alemania.',
     subtitle: 'Antes de hacer la maleta sabrás cuánto vas a cobrar, cuánto pagarás por la habitación y cuánto te quedará limpio. Después te presento a una agencia certificada.',
     note: 'En español, de tú a tú y sin coste para ti.',
     primaryCta: { label: 'Enviar mi candidatura', href: '#candidatura' },
@@ -10,7 +13,8 @@ window.RumboNorteContenido.inicio = {
     promises: [
       'Gratis para el candidato, siempre',
       'Agencias de trabajo temporal certificadas',
-      'Información con fuentes oficiales'
+      'Información con fuentes oficiales',
+      'Requisitos: +21 años · pasaporte UE · inglés B1'
     ],
     person: { name: 'Soy Iván', role: 'Tu reclutador en Rumbo Norte' },
     photoSrc: 'assets/fotos/ivan-retrato.webp',
@@ -48,12 +52,12 @@ window.RumboNorteContenido.inicio = {
     cta: { label: 'Conoce a Iván', href: 'quienes-somos.html' },
     intro: 'Me llamo Iván y soy reclutador.',
     paragraphs: [
-      'Busco en España a gente que quiera trabajar en Países Bajos, Bélgica o Alemania y la presento a agencias de trabajo temporal certificadas de esos países, que son las que contratan.',
+      'Busco en España a gente que quiera trabajar en Países Bajos, donde están la gran mayoría de mis vacantes, y también en Bélgica y Alemania. La presento a agencias de trabajo temporal certificadas de esos países, que son las que contratan.',
       'Antes de presentarte a nadie te cuento lo que casi ningún anuncio cuenta: cuánto te queda limpio después de los descuentos, qué te cobran por la habitación y cómo comprobar que la agencia es legal. Si con eso delante te sigue interesando, seguimos.'
     ],
     note: {
       title: 'Para ti es gratis, ahora y después.',
-      text: 'Quien me paga es la agencia. Yo selecciono y presento, pero no contrato: la última palabra es de la agencia y no te voy a prometer un puesto. Toda la información lleva su fuente oficial para que la compruebes tú.'
+      text: 'Yo selecciono y presento, pero no contrato: la última palabra es de la agencia y no te voy a prometer un puesto. Toda la información lleva su fuente oficial para que la compruebes tú.'
     }
   },
   topics: {
@@ -65,8 +69,9 @@ window.RumboNorteContenido.inicio = {
         src: 'assets/ilustraciones/ilustracion-nomina.webp',
         width: 840,
         height: 456,
-        figure: '1.250–1.500 €',
+        figure: '1.250–2.200 €',
         unit: 'al mes en tu cuenta',
+        figureNote: 'Cifra orientativa: depende de la agencia, la ciudad y el alojamiento.',
         text: 'Con 40 horas a la semana y el alojamiento ya descontado. La nómina, línea a línea, en la guía.',
         href: 'guia.html#nomina',
         linkHint: 'Entender la nómina'
@@ -77,8 +82,9 @@ window.RumboNorteContenido.inicio = {
         src: 'assets/ilustraciones/ilustracion-alojamiento.webp',
         width: 840,
         height: 450,
-        figure: '90–130 €',
+        figure: '80–150 €',
         unit: 'a la semana por la habitación',
+        figureNote: 'Cifra orientativa: depende de la agencia, la ciudad y el alojamiento.',
         text: 'Casi siempre compartida, y atada al contrato. Qué preguntar antes de firmar.',
         href: 'guia.html#alojamiento',
         linkHint: 'Conocer las condiciones'
@@ -100,37 +106,23 @@ window.RumboNorteContenido.inicio = {
   destinos: {
     eyebrow: 'Destinos',
     title: [
-      'Tres países,',
-      'tres formas de trabajar.'
+      'Países Bajos primero.',
+      'Bélgica y Alemania, también.'
     ],
-    text: 'Las reglas cambian al cruzar la frontera: quién certifica a la agencia, qué número te piden al llegar y qué idioma pesa. Esto es lo básico de cada uno; lo de tu caso, lo hablamos.',
+    text: 'Casi todas mis vacantes están en Países Bajos. En Bélgica y Alemania también hay, pero menos y más puntuales. Las reglas cambian al cruzar la frontera: quién certifica a la agencia, qué número te piden al llegar y qué idioma pesa. Esto es lo básico de cada uno; lo de tu caso, lo hablamos.',
     id: 'destinos',
     hint: 'Un rumbo, tres destinos. Elige un país en la maqueta.',
     placeLabel: 'Ver su ficha',
     sceneUrl: 'js/paises-3d.js',
+    defaultId: 'paises-bajos',
     posterSrc: 'assets/3d/paises-poster.webp',
     posterTallSrc: 'assets/3d/paises-poster-movil.webp',
     items: [
       {
-        id: 'belgica',
-        name: 'Bélgica',
-        spot: [17.5, 80.6],
-        spotTall: [47, 92.4],
-        intro: 'Cerca, con sueldos que se actualizan con la inflación y un país partido en dos idiomas. Dónde caigas cambia mucho el día a día.',
-        facts: [
-          { label: 'Se pide sobre todo', value: 'Logística, alimentación, producción' },
-          { label: 'Cómo verificar la agencia', value: 'Acreditación de su región: Flandes, Valonia o Bruselas' },
-          { label: 'Tu número al llegar', value: 'Número de la seguridad social belga (INSZ / NISS)' },
-          { label: 'Idioma', value: 'Neerlandés en Flandes, francés en Valonia; el inglés ayuda' }
-        ],
-        action: {
-          label: 'Pregúntame por Bélgica',
-          href: 'wa:Hola Iván. Me interesa trabajar en Bélgica, ¿me cuentas cómo funciona?'
-        }
-      },
-      {
         id: 'paises-bajos',
         name: 'Países Bajos',
+        main: true,
+        tag: 'Destino principal · la mayoría de vacantes',
         spot: [50, 69.8],
         spotTall: [44.9, 29.5],
         intro: 'El destino más rodado: mucha logística, invernaderos y producción, con alojamiento casi siempre gestionado por la agencia.',
@@ -138,13 +130,32 @@ window.RumboNorteContenido.inicio = {
           { label: 'Se pide sobre todo', value: 'Almacén, carretilla, alimentación, invernaderos' },
           { label: 'Cómo verificar la agencia', value: 'Registro SNA y, para el alojamiento, SNF' },
           { label: 'Tu número al llegar', value: 'BSN, en el ayuntamiento (*gemeente*)' },
-          { label: 'Idioma', value: 'Con inglés básico entras en la mayoría de puestos' }
+          { label: 'Idioma', value: 'Inglés B1 conversacional, obligatorio. El neerlandés no se pide al principio.' }
         ],
         action: { label: 'Guía completa de Países Bajos', href: 'guia.html' }
       },
       {
+        id: 'belgica',
+        name: 'Bélgica',
+        tag: 'Vacantes puntuales',
+        spot: [17.5, 80.6],
+        spotTall: [47, 92.4],
+        intro: 'Cerca, con sueldos que se actualizan con la inflación y un país partido en dos idiomas. Dónde caigas cambia mucho el día a día.',
+        facts: [
+          { label: 'Se pide sobre todo', value: 'Logística, alimentación, producción' },
+          { label: 'Cómo verificar la agencia', value: 'Acreditación de su región: Flandes, Valonia o Bruselas' },
+          { label: 'Tu número al llegar', value: 'Número de la seguridad social belga (INSZ / NISS)' },
+          { label: 'Idioma', value: 'Inglés B1 conversacional, obligatorio. Suman el neerlandés en Flandes y el francés en Valonia.' }
+        ],
+        action: {
+          label: 'Pregúntame por Bélgica',
+          href: 'wa:Hola Iván. Me interesa trabajar en Bélgica, ¿me cuentas cómo funciona?'
+        }
+      },
+      {
         id: 'alemania',
         name: 'Alemania',
+        tag: 'Vacantes puntuales',
         spot: [82.9, 82.4],
         spotTall: [52.8, 60.8],
         intro: 'El mercado más grande: industria, automoción y centros logísticos enormes. Pide más papeleo y premia al que se defiende en alemán.',
@@ -155,7 +166,7 @@ window.RumboNorteContenido.inicio = {
             value: 'Permiso de cesión de trabajadores de la Bundesagentur für Arbeit'
           },
           { label: 'Tu número al llegar', value: 'Empadronamiento (*Anmeldung*), número fiscal y de seguridad social' },
-          { label: 'Idioma', value: 'Un alemán básico abre muchas más puertas que en los otros dos' }
+          { label: 'Idioma', value: 'Inglés B1 conversacional, obligatorio. El alemán suma mucho más que en los otros dos.' }
         ],
         action: {
           label: 'Pregúntame por Alemania',
@@ -185,13 +196,13 @@ window.RumboNorteContenido.inicio = {
           {
             title: 'Te explico los números de tu caso',
             blocks: [
-              'Nómina, descuentos, alojamiento, contrato de fase A, seguro médico, BSN. En español y con cifras.'
+              'Nómina, descuentos, alojamiento, contrato de fase A, seguro médico, BSN. En español y con cifras orientativas.'
             ]
           },
           {
-            title: 'Te presento a agencias certificadas',
+            title: 'Te asigno vacantes de agencias certificadas',
             blocks: [
-              'Si encajas y tú quieres, envío tu candidatura a agencias de trabajo temporal certificadas en Países Bajos, Bélgica o Alemania. Antes te digo a cuál y cómo comprobarla.'
+              'Si cumples los requisitos y pasas la entrevista, te doy acceso a la plataforma de candidatos y te asigno vacantes de agencias de trabajo temporal certificadas, sobre todo de Países Bajos.'
             ]
           },
           {
@@ -222,12 +233,6 @@ window.RumboNorteContenido.inicio = {
             blocks: [
               'Puedo decirte si tu perfil encaja y presentarte. Contratar lo decide la agencia, y depende de la temporada y del puesto.'
             ]
-          },
-          {
-            title: 'No envío tus datos sin permiso',
-            blocks: [
-              'Tu candidatura solo sale de aquí si marcas la casilla de consentimiento, y siempre sabiendo a qué empresa va.'
-            ]
           }
         ]
       }
@@ -246,7 +251,7 @@ window.RumboNorteContenido.inicio = {
       'Los perfiles que',
       'más me piden.'
     ],
-    text: 'No son ofertas concretas. Es lo que las agencias para las que selecciono, en los tres países, piden casi siempre. Qué hay abierto en cada momento te lo cuento cuando hablemos, porque cambia cada semana.',
+    text: 'No son ofertas concretas. Es lo que las agencias para las que selecciono, sobre todo en Países Bajos, piden casi siempre. Qué hay abierto en cada momento te lo cuento cuando hablemos, porque cambia cada semana.',
     id: 'perfiles',
     items: [
       {
@@ -266,6 +271,24 @@ window.RumboNorteContenido.inicio = {
         short: 'Carretilla',
         title: 'Carretilleros y retráctil',
         text: 'El perfil más buscado del almacén y de los mejor pagados. Si has llevado carretilla o *reachtruck*, dímelo desde el principio. Allí suelen pedir el certificado neerlandés, y muchas agencias te lo pagan.'
+      },
+      {
+        eyebrow: 'Transporte',
+        id: 'camion',
+        photo: 'assets/perfiles/camion',
+        focus: [50, 50],
+        short: 'Camión',
+        title: 'Conductores de camión',
+        text: 'Rutas nacionales e internacionales, distribución y reparto. Es uno de los perfiles con más vacantes. Se pide carnet C o C+E en vigor, el CAP (código 95) y tarjeta de tacógrafo. Cuánta experiencia piden depende de la agencia y del puesto.'
+      },
+      {
+        eyebrow: 'Transporte',
+        id: 'autobus',
+        photo: 'assets/perfiles/autobus',
+        focus: [50, 50],
+        short: 'Autobús',
+        title: 'Conductores de autobús',
+        text: 'Transporte urbano, interurbano y de empresa. Es uno de los perfiles con más vacantes. Se pide carnet D en vigor y el CAP (código 95). Los requisitos exactos dependen de la agencia y del puesto.'
       },
       {
         eyebrow: 'Industria',
@@ -304,12 +327,21 @@ window.RumboNorteContenido.inicio = {
         text: 'Soldadores, montadores, electricistas. Aquí sí piden experiencia que se pueda demostrar y, a veces, certificados como el VCA de seguridad.'
       }
     ],
+    requisitos: {
+      title: 'Requisitos obligatorios para cualquier vacante',
+      items: [
+        'Tener 21 años o más.',
+        'Nacionalidad o pasaporte de la Unión Europea.',
+        'Inglés nivel B1 conversacional como mínimo.'
+      ],
+      text: 'Son indispensables y no tienen excepciones. Si no cumples alguno de los tres, no puedo presentarte a ninguna de mis vacantes.'
+    },
     note: {
       title: 'Lo que suma en cualquier perfil',
       tone: 'sand',
       blocks: [
-        'Un poco de inglés, aunque sea básico. Carnet B, y mejor todavía si tienes coche. Poder viajar pronto. Y la intención de quedarte una temporada de verdad, no tres semanas.',
-        'Nada de esto es obligatorio para hablar conmigo. Escríbeme aunque no tengas ninguna de estas cosas y te digo con sinceridad qué opciones hay.'
+        'Carnet B, y mejor todavía si tienes coche. Poder viajar pronto. Y la intención de quedarte una temporada de verdad, no tres semanas.',
+        'Si cumples los tres requisitos, escríbeme y vemos qué vacantes encajan con tu perfil.'
       ]
     }
   },
@@ -319,7 +351,7 @@ window.RumboNorteContenido.inicio = {
       'Cómo es la selección,',
       'paso a paso.'
     ],
-    text: 'Seis pasos. En los tres primeros no te comprometes a nada y tus datos no salen de aquí.',
+    text: 'Seis pasos. Del 2 al 4 son la entrevista conmigo.',
     id: 'proceso',
     steps: [
       {
@@ -328,29 +360,50 @@ window.RumboNorteContenido.inicio = {
         text: 'Por WhatsApp o con el formulario. Cuéntame tu situación: idiomas, si tienes carnet, cuándo podrías viajar y qué te preocupa. No hace falta que lo tengas todo decidido.'
       },
       {
-        when: 'Días 1–3',
-        title: 'Hablamos y valoro tu perfil',
-        text: 'Una conversación corta en la que te hago unas preguntas para ver qué puestos te encajan. Y te explico los números de tu caso: qué se paga en ese sector, qué te descontarían por alojamiento, qué te quedaría limpio y qué colchón necesitas. Si no te salen las cuentas, mejor saberlo ahora.'
+        when: 'Entrevista',
+        title: 'Confirmo que cumples los requisitos',
+        text: 'Lo primero que compruebo son los tres requisitos obligatorios para cualquier vacante: tener 21 años o más, nacionalidad o pasaporte de la Unión Europea y un nivel de inglés B1 conversacional como mínimo. Si falta alguno, te lo digo en ese momento y no seguimos.'
       },
       {
-        when: 'Cuando tú digas',
-        title: 'Decides si sigues o lo dejas',
-        text: 'Mucha gente lo piensa y decide que no le compensa. Me parece bien: también es un buen resultado. No te voy a insistir ni a llamarte tres veces.'
+        when: 'Entrevista',
+        title: 'Hablamos de tu experiencia',
+        text: 'Repasamos dónde has trabajado, en qué puestos y durante cuánto tiempo, si tienes carnet o algún certificado (carretilla, CAP…) y desde cuándo podrías viajar. Con eso veo qué vacantes encajan contigo.'
       },
       {
-        when: 'Con tu permiso',
-        title: 'Presento tu candidatura a una agencia certificada',
-        text: 'Solo si marcas la casilla de consentimiento. Antes te digo a qué agencia va, con su nombre legal y su número de registro, y luego le envío tu perfil con lo que hemos hablado.'
+        when: 'Entrevista en inglés',
+        title: 'Unas preguntas en inglés',
+        text: 'Te hago unas preguntas en inglés para comprobar tu nivel. No es un examen de gramática: es ver que puedes mantener una conversación, porque es lo que te van a pedir en el trabajo.'
       },
       {
-        when: '1–3 semanas',
-        title: 'La agencia te entrevista',
-        text: 'Por videollamada o por teléfono, normalmente en inglés o con intérprete. Te preparo antes para que sepas qué te van a preguntar. La relación laboral es entre tú y la agencia: yo no firmo nada contigo ni te cobro nada.'
+        when: 'Si pasas la entrevista',
+        title: 'Te registras en la plataforma de candidatos',
+        blocks: [
+          'Para acceder a nuestras vacantes te envío un enlace de acceso para candidatos. Ahí te registras y subes toda la documentación necesaria.',
+          {
+            ul: [
+              'Lo más importante es el **CV**. Tiene que estar actualizado, con las fechas de cada trabajo en mes y año, tus datos al día y todo en inglés.',
+              'Ten en cuenta también que algunas de nuestras agencias piden un **certificado de antecedentes penales** limpio, con una antigüedad máxima de 6 meses.'
+            ]
+          },
+          'Cuando estés registrado, te asigno **tres vacantes** que se ajusten a tu perfil.'
+        ]
       },
       {
-        when: 'Antes de firmar',
-        title: 'Revisas el contrato con la lista en la mano',
-        text: 'Te doy una lista de comprobación: fase del contrato, cláusula de puesta a disposición, coste exacto del alojamiento, días para dejar la habitación si se acaba el trabajo, seguro médico y transporte. Léela entera antes de firmar.'
+        when: 'Antes de viajar',
+        title: 'Las condiciones de trabajo',
+        blocks: [
+          {
+            ul: [
+              '**Sueldo:** en puestos sin cualificación se cobra el salario mínimo. En Países Bajos, para mayores de 21 años, es de 14,99 € brutos la hora (unos 15 €) desde el 1 de julio de 2026.',
+              '**Alojamiento y transporte:** los organiza la agencia que te contrata como empleado, y los dos se descuentan del sueldo. Normalmente la casa y la habitación son compartidas, aunque depende de la agencia y del alojamiento.',
+              '**Turnos:** pueden ser de mañana, tarde o noche.',
+              '**Viaje:** el vuelo y el traslado hasta la oficina de la agencia o el alojamiento los pagas tú. Algunas agencias recogen en el aeropuerto, pero no todas.',
+              '**Dinero para empezar:** te aconsejo llevar un colchón para comer y moverte hasta el primer pago, que suele llegar a las dos semanas.'
+            ]
+          },
+          { small: 'Todas las cifras de esta página son orientativas y no son una promesa. Lo que cobres y lo que te descuenten lo fija la agencia que te contrate como empleado, y depende de la ciudad, el puesto, las horas, los turnos y el alojamiento y su tipo. Las condiciones reales solo las sabrás cuando la agencia te las dé por escrito.' },
+          'Antes de firmar, repasa [la lista de preguntas de la guía](guia.html#preguntas-firmar).'
+        ]
       }
     ],
     actions: [
@@ -373,15 +426,16 @@ window.RumboNorteContenido.inicio = {
           {
             q: '¿Cuánto se cobra de verdad, después de todos los descuentos?',
             blocks: [
-              'Trabajando 40 horas semanales y con alojamiento incluido, lo habitual es que **en la cuenta te entren entre 1.250 y 1.500 € al mes**. El bruto es bastante más alto: la diferencia se la llevan la retención de impuestos, el alojamiento, el seguro médico y el transporte.',
+              'Trabajando 40 horas semanales y con el alojamiento ya descontado, lo que entra en la cuenta puede moverse en un abanico amplio, **entre 1.250 y 2.200 € al mes**. No es una cifra fija ni garantizada: depende de la agencia que te contrate, el puesto, la ciudad, las horas extra y los turnos, y el alojamiento y su tipo. El bruto es bastante más alto: la diferencia se la llevan la retención de impuestos, el alojamiento, el seguro médico y el transporte.',
               'Hay una parte que no ves cada semana pero que es tuya: las *reservas* de vacaciones y la paga extra (*vakantiegeld*, un 8,33 % del bruto). Se acumulan aparte y se cobran cuando las pides o en mayo.',
-              'El desglose línea a línea de una nómina está en [la guía](guia.html#nomina).'
+              'El desglose línea a línea de una nómina está en [la guía](guia.html#nomina).',
+              { small: window.RumboNorteCifras.aviso }
             ]
           },
           {
             q: '¿Cuánto me quitan por el alojamiento?',
             blocks: [
-              'Entre **90 y 130 € por semana y por persona**, casi siempre en habitación compartida con otra persona, en un bungalow, un antiguo hotel o un edificio reconvertido.',
+              'Como orientación, **entre 80 y 150 € por semana y por persona**, según la agencia, la ciudad y el tipo de alojamiento. Casi siempre en habitación compartida con otra persona, en un bungalow, un antiguo hotel o un edificio reconvertido.',
               'Hay un límite legal: el descuento por alojamiento **no puede superar el 25 % del salario mínimo** que te corresponda. Y solo se puede descontar directamente de la nómina si el alojamiento cumple la norma **SNF**. Si te descuentan más, o el alojamiento no está certificado, algo va mal.',
               'Antes de presentarte a una agencia le pregunto tres cosas, y te aconsejo que las tengas tú también por escrito: cuánto cuesta a la semana, cuántas personas hay por habitación y a qué distancia está del trabajo.'
             ]
@@ -397,7 +451,8 @@ window.RumboNorteContenido.inicio = {
           {
             q: '¿Cuánto dinero necesito para empezar?',
             blocks: [
-              'Calcula **entre 800 y 1.200 €** de colchón. Se van en el viaje, en comer las dos o tres primeras semanas hasta el primer cobro, en la fianza del alojamiento si la piden y en los primeros gastos sueltos.',
+              'Como orientación, calcula **entre 800 y 1.200 €** de colchón. Se van en el viaje, en comer las dos o tres primeras semanas hasta el primer cobro, en la fianza del alojamiento si la piden y en los primeros gastos sueltos.',
+              { cifra: window.RumboNorteCifras.nota },
               'Lo normal en el sector es **cobrar por semanas**, así que el primer ingreso suele llegar entre siete y catorce días después de empezar. Ese hueco es el que hay que cubrir. Ir sin colchón es el error más caro que veo.'
             ]
           },
@@ -405,7 +460,7 @@ window.RumboNorteContenido.inicio = {
             q: '¿Tengo que pagarte algo a ti o a la agencia?',
             blocks: [
               '**No. Ni un euro, en ningún momento.** Ni a mí ni a la agencia.',
-              'Las agencias de trabajo temporal no pueden cobrar al trabajador por conseguirle un empleo; en Países Bajos lo prohíbe expresamente la ley. De qué vivo yo lo tienes explicado entero, con el flujo del dinero, [en la sección sobre el modelo de trabajo](#modelo).'
+              'Las agencias de trabajo temporal no pueden cobrar al trabajador por conseguirle un empleo; en Países Bajos lo prohíbe expresamente la ley.'
             ]
           }
         ]
@@ -416,8 +471,8 @@ window.RumboNorteContenido.inicio = {
           {
             q: '¿Necesito hablar inglés o neerlandés?',
             blocks: [
-              'Para la mayoría de puestos de almacén, producción o agricultura, **con un inglés básico te apañas**: entender instrucciones, números y turnos. Nadie te va a hacer un examen.',
-              'Sin nada de inglés las opciones se reducen bastante y dependes de que haya alguien que hable español en tu equipo. Con un inglés medio se abren logística, hostelería y puestos con más responsabilidad. El neerlandés casi nadie lo pide al principio, pero es lo que marca la diferencia si te quedas.'
+              '**Inglés, sí: un nivel B1 conversacional como mínimo es obligatorio para cualquiera de mis vacantes, sin excepciones.** Lo compruebo yo en la entrevista con unas preguntas en inglés.',
+              'Lo necesitas para entender instrucciones de seguridad, turnos y números, y para hablar con tus responsables. Con un nivel más alto se abren puestos con más responsabilidad. El neerlandés casi nadie lo pide al principio, pero es lo que marca la diferencia si te quedas.'
             ]
           },
           {
@@ -425,7 +480,8 @@ window.RumboNorteContenido.inicio = {
             blocks: [
               'No es obligatorio, pero **cambia bastante las cosas**. Muchos alojamientos están en polígonos o en pueblos pequeños y el transporte lo organiza la agencia con furgonetas a horas fijas.',
               'Con carnet B (y sobre todo si te atreves a conducir allí) tienes más flexibilidad, más puestos donde elegir y dependes menos de los demás. El carnet español vale en Países Bajos sin hacer ningún trámite.',
-              'Si eres carretillero, es un plus real: el *heftruck* se paga mejor. Allí suelen pedir el certificado neerlandés, y muchas agencias te lo pagan cuando ya estás dentro.'
+              'Si eres carretillero, es un plus real: el *heftruck* se paga mejor. Allí suelen pedir el certificado neerlandés, y muchas agencias te lo pagan cuando ya estás dentro.',
+              'Para trabajar de **conductor de camión o de autobús**, el carnet profesional (C, C+E o D) y el CAP sí son obligatorios.'
             ]
           },
           {
@@ -446,7 +502,7 @@ window.RumboNorteContenido.inicio = {
           {
             q: '¿Qué país me conviene más?',
             blocks: [
-              'Depende sobre todo de los idiomas y de lo que sepas hacer. **Si solo tienes inglés básico, Países Bajos es la entrada más fácil.** Bélgica se parece mucho y, si te defiendes en francés, Valonia y Bruselas suman. **Alemania paga bien la experiencia en industria y metal**, pero el alemán pesa más y hay más trámites al llegar.',
+              '**En la mayoría de los casos, Países Bajos:** es donde están casi todas mis vacantes y donde el sistema está más rodado. Bélgica se parece mucho y, si además hablas francés, Valonia y Bruselas suman. **Alemania paga bien la experiencia en industria y metal**, pero el alemán pesa más y hay más trámites al llegar. En los tres, el inglés B1 es obligatorio.',
               'Lo vemos en la primera conversación con tu perfil delante. No te voy a mandar a un país que no te encaja solo porque ahí haya plazas.'
             ]
           }
@@ -465,78 +521,33 @@ window.RumboNorteContenido.inicio = {
                   '**SNF** — [normeringflexwonen.nl](https://www.normeringflexwonen.nl). Certifica que el alojamiento cumple unos mínimos.'
                 ]
               },
-              'En Bélgica la agencia tiene que estar acreditada por su región, y en Alemania necesita el permiso de cesión de la Bundesagentur für Arbeit. Antes de presentarte te doy el nombre legal y el número de registro de la agencia para que lo mires tú, no solo yo. Si el nombre exacto no aparece en el registro, para. En [la guía](guia.html#verificar) tienes el paso a paso y las señales de alarma.'
+              'En Bélgica la agencia tiene que estar acreditada por su región, y en Alemania necesita el permiso de cesión de la Bundesagentur für Arbeit. Cuando te asigne una vacante sabrás qué agencia es: busca su nombre legal en el registro y compruébalo tú, no solo yo. Si el nombre exacto no aparece en el registro, para. En [la guía](guia.html#verificar) tienes el paso a paso y las señales de alarma.'
             ]
           },
           {
             q: '¿Qué puestos tienes ahora mismo?',
             blocks: [
-              'Los perfiles que más me piden los tienes [más arriba](#perfiles): **logística y almacén** (el país entero funciona como el almacén de Europa), **producción de alimentación**, **agricultura e invernaderos**, que van muy por temporadas, y **limpieza industrial**. Construcción y metal piden más experiencia acreditada.',
+              'Los perfiles que más me piden los tienes [más arriba](#perfiles): **logística y almacén** (el país entero funciona como el almacén de Europa), **conductores de camión y de autobús**, **producción de alimentación**, **agricultura e invernaderos**, que van muy por temporadas, y **limpieza industrial**. Construcción y metal piden más experiencia acreditada.',
               'Lo que hay abierto en concreto te lo digo por WhatsApp, porque cambia de una semana a otra y prefiero no colgar en la web algo que mañana ya no existe. Ahí también te explico cómo funciona cada sector por dentro, los turnos y lo que se paga.'
             ]
           },
           {
             q: '¿Qué me vas a preguntar en la primera conversación?',
             blocks: [
-              'Lo básico: qué experiencia tienes, qué idiomas hablas y a qué nivel, si tienes carnet, desde cuándo podrías viajar y si vas solo o acompañado. Son diez minutos.',
+              'Primero confirmo los tres requisitos: edad, nacionalidad y nivel de inglés. Después, qué experiencia tienes, si tienes carnet, desde cuándo podrías viajar y si vas solo o acompañado. Al final te hago unas preguntas en inglés para comprobar tu nivel.',
               '**En esa primera conversación no te pido el DNI ni ningún documento.** Si alguien te los pide antes de haber hablado contigo, desconfía.'
             ]
           },
           {
             q: '¿Cuánto tarda todo desde que te escribo?',
             blocks: [
-              'Depende sobre todo de la temporada y de tu perfil, así que cualquier cifra cerrada sería mentira. Lo que sí te puedo decir es el orden real: primero hablamos y te hago unas preguntas; si encajas y quieres, envío tu candidatura a una agencia certificada; ellos te entrevistan y, si les encaja, te dan una fecha.',
-              'Desde la entrevista en adelante la decisión ya no es mía, y no voy a fingir que lo es. El proceso completo, paso a paso, está [en el apartado del proceso](#proceso).'
+              'Depende sobre todo de la temporada y de tu perfil, así que cualquier cifra cerrada sería mentira. Lo que sí te puedo decir es el orden real: primero confirmo los requisitos y hacemos la entrevista; si la pasas, te registras en la plataforma de candidatos, subes tu documentación y te asigno tres vacantes que encajen con tu perfil.',
+              'Desde que te asigno las vacantes, la decisión ya no es mía, y no voy a fingir que lo es. El proceso completo, paso a paso, está [en el apartado del proceso](#proceso).'
             ]
           }
         ]
       }
     ]
-  },
-  modelo: {
-    eyebrow: 'El dinero',
-    title: [
-      'Por qué es gratis',
-      'para ti y quién me paga.'
-    ],
-    text: '«Gratis» pone nerviosa a la gente, y con razón. Así que aquí tienes el flujo del dinero completo, sin adornos.',
-    id: 'modelo',
-    paragraphs: [
-      'Las agencias de trabajo temporal de Países Bajos, Bélgica y Alemania necesitan candidatos todo el año y les cuesta encontrarlos. Pagan anuncios, portales y reclutadores en varios países. **Yo soy uno de esos reclutadores: la agencia me paga por seleccionarle candidatos, y tú no pagas nada.**',
-      'No hay más. No vendo tus datos, no cobro comisión sobre tu sueldo y no te descuentan nada de la nómina por haber llegado a través de mí.'
-    ],
-    flow: [
-      {
-        who: 'Tú',
-        title: 'Pagas cero',
-        text: 'Ni al principio, ni al final, ni con un descuento en la nómina. En ningún momento.',
-        figure: '0 €'
-      },
-      { arrow: 'tu candidatura', back: false },
-      {
-        who: 'Iván, reclutador',
-        title: 'Selecciona y presenta',
-        text: 'Valora tu perfil, te explica el sistema y, si tú quieres, te presenta a una agencia certificada.'
-      },
-      { arrow: 'me paga', back: true },
-      {
-        who: 'Agencia certificada',
-        title: 'Te contrata',
-        text: 'Es tu empleador. Te paga el sueldo entero según el convenio que le aplique.'
-      }
-    ],
-    note: {
-      title: 'Lo que esto implica, para que lo tengas claro',
-      blocks: [
-        'Que me paguen las agencias quiere decir que me interesa que acabes trabajando con alguna. Prefiero decírtelo yo a que lo descubras tú.',
-        'Lo que hago con ese interés es contarte también lo que juega en contra: los descuentos, la cláusula de puesta a disposición, el alojamiento atado al contrato. Alguien que llega engañado y se vuelve a los dos meses no le sirve a nadie. A ti el que menos, pero tampoco a la agencia ni a mí.'
-      ]
-    },
-    quote: {
-      text: 'Si alguien te promete un trabajo seguro en el norte de Europa, o no sabe cómo funciona el sector, o sabe perfectamente que te está mintiendo.',
-      by: 'Iván, Rumbo Norte'
-    },
-    link: { label: 'Quién soy y por qué me dedico a esto', href: 'quienes-somos.html' }
   },
   aviso: {
     eyebrow: 'La guía práctica',
@@ -589,32 +600,45 @@ window.RumboNorteContenido.inicio = {
       '+56 CL',
       'Otro'
     ],
+    edadHint: 'Mínimo 21 años',
+    nacionalidad: {
+      label: '¿Tienes nacionalidad o pasaporte de la Unión Europea?',
+      options: ['Elige una opción', 'Sí', 'No']
+    },
+    ingles: [
+      'Elige una opción',
+      'Menos de B1',
+      'B1 (conversacional)',
+      'B2 o superior'
+    ],
     destinos: [
-      'Países Bajos',
+      { value: 'Países Bajos', note: '(la mayoría de vacantes)' },
       'Bélgica',
       'Alemania',
       'Me da igual'
     ],
     idiomas: [
       'Español',
-      'Inglés básico',
-      'Inglés medio o alto',
       'Neerlandés',
       'Francés',
       'Alemán',
       'Otro'
     ],
     carnet: [
-      'Elige una opción',
-      'Sí, carnet B y coche propio',
-      'Sí, carnet B sin coche',
-      'Sí, y además carretillero',
+      'Carnet B',
+      'Coche propio',
+      'Carnet C o C+E (camión)',
+      'Carnet D (autobús)',
+      'CAP (código 95)',
+      'Certificado de carretillero',
       'No tengo carnet'
     ],
     sector: [
       'Elige una opción',
       'Logística y almacén',
       'Carretillero / reachtruck',
+      'Conductor de camión (C / C+E)',
+      'Conductor de autobús (D)',
       'Producción y alimentación',
       'Agricultura e invernaderos',
       'Limpieza industrial',
@@ -624,7 +648,7 @@ window.RumboNorteContenido.inicio = {
       'Me da igual, lo que salga',
       'Todavía no lo sé'
     ],
-    consent: 'He leído la [política de privacidad](privacidad.html) y acepto que **Rumbo Norte (Iván Guerra Arroyo) use estos datos para valorar mi candidatura y, si encajo, los envíe a agencias de trabajo temporal certificadas de Países Bajos, Bélgica o Alemania** para que se pongan en contacto conmigo. Sé que antes me dirá a qué agencia los envía, que es una transferencia a otra empresa dentro de la Unión Europea y que puedo retirar este consentimiento cuando quiera escribiendo a [ivan@proyectoholanda.com](mailto:ivan@proyectoholanda.com).',
+    consent: 'He leído la [política de privacidad](privacidad.html) y acepto que **Rumbo Norte (Iván Guerra Arroyo) use estos datos para valorar mi candidatura y, si encajo, los envíe a agencias de trabajo temporal certificadas de Países Bajos, Bélgica o Alemania** para que se pongan en contacto conmigo. Sé que es una transferencia a otra empresa dentro de la Unión Europea y que puedo retirar este consentimiento cuando quiera escribiendo a [ivan@proyectoholanda.com](mailto:ivan@proyectoholanda.com).',
       foot: 'No cuesta nada, ni ahora ni después. No te voy a llamar sin avisarte antes por WhatsApp.'
     }
   }

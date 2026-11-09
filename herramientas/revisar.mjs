@@ -134,13 +134,14 @@ async function form() {
   await b.ev(`document.querySelector('.rn-form button[type=submit]').click()`);
   await b.sleep(200);
   const errors = await b.ev(`document.querySelectorAll('.rn-form .rn-field-error').length`);
-  if (errors !== 6) report('formulario', `enviar vacío da ${errors} errores y deberían ser 6`);
+  if (errors !== 9) report('formulario', `enviar vacío da ${errors} errores y deberían ser 9`);
   if (!(await b.ev(`document.activeElement.name === 'nombre'`))) report('formulario', 'el foco no va al primer error');
   await b.ev(`(() => {
     const f = document.querySelector('.rn-form');
     const set = (n, v) => { const el = f.elements[n]; const d = Object.getOwnPropertyDescriptor(el.constructor.prototype, 'value'); d.set.call(el, v); el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); };
     set('nombre', 'Prueba Local'); set('telefono', '600 000 000'); set('email', 'prueba@ejemplo.com');
-    set('carnet', f.elements.carnet.options[1].value); set('sector', f.elements.sector.options[1].value);
+    set('edad', '27'); set('nacionalidad_ue', 'Sí'); set('nivel_ingles', f.elements.nivel_ingles.options[2].value);
+    f.elements.carnet[0].click(); set('sector', f.elements.sector.options[1].value);
     f.elements.consentimiento_rgpd.click();
     f.querySelector('button[type=submit]').click();
   })()`);

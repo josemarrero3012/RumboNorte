@@ -69,7 +69,7 @@ window.RumboNorteContenido.guia = {
         'Cuando leas esto puede que ya haya cambiado. **Compruébalo tú, son treinta segundos:** [rijksoverheid.nl — minimumloon](https://www.rijksoverheid.nl/onderwerpen/minimumloon).',
         'Encima de ese mínimo, si la empresa cliente tiene su propio convenio, a menudo te corresponde **el mismo salario que a un empleado fijo de esa empresa haciendo tu trabajo**. Es lo que se llama la equiparación salarial y es un derecho, no un favor. Pregunta siempre si se te aplica.',
         { h3: 'Ejemplo completo de una semana' },
-        'Cuarenta horas a 15,00 € brutos, con alojamiento y seguro descontados por la agencia. Los importes son **orientativos**: las retenciones dependen de tu situación personal y el alojamiento varía mucho.',
+        'Cuarenta horas a 15,00 € brutos, con alojamiento y seguro descontados por la agencia. Los importes son **orientativos y no definitivos**: las retenciones dependen de tu situación personal, y el sueldo y el alojamiento dependen de la agencia que te contrate, la ciudad y el tipo de alojamiento.',
         {
           payslip: {
             caption: 'Ejemplo orientativo · 40 h a 15,00 €/h brutos · una semana',
@@ -137,7 +137,8 @@ window.RumboNorteContenido.guia = {
             numeric: [1]
           }
         },
-        'Eso son unos **1.400 € al mes** limpios. Es una cifra digna, pero está muy lejos de los «2.500 € al mes» que se leen por ahí: esos 2.500 son el bruto, antes de que pase absolutamente nada.',
+        'En este ejemplo concreto salen unos **1.400 € al mes** limpios. Es solo un ejemplo: según la agencia, el puesto, la ciudad, las horas y el alojamiento, lo que entra en la cuenta puede moverse **entre 1.250 y 2.200 € al mes**, y nadie te lo puede asegurar antes de que la agencia te dé las condiciones por escrito. Y ojo con los «2.500 € al mes» que se leen por ahí: con el salario mínimo, eso es el bruto, antes de que pase absolutamente nada.',
+        { small: window.RumboNorteCifras.aviso },
         { h3: 'Las reservas: dinero tuyo que no ves cada semana' },
         'Aparte de todo lo anterior, cada semana se te **acumulan reservas** que son tuyas y que se cobran aparte:',
         {
@@ -209,7 +210,8 @@ window.RumboNorteContenido.guia = {
       blocks: [
         { h3: 'Qué te vas a encontrar' },
         'Lo habitual es una **habitación compartida con otra persona** en un bungalow, un antiguo hotel reconvertido o un bloque específico para trabajadores. Cocina y baño compartidos con cuatro o seis personas más. Suele estar amueblado, con wifi y con la ropa de cama incluida. El precio va **por persona y por semana**, no por habitación.',
-        'Los precios reales se mueven entre **90 y 130 € por semana**. Una habitación individual, cuando la hay, se va por encima de los 150 €.',
+        'Los precios orientativos se mueven entre **80 y 150 € por semana y por persona**, según la agencia, la ciudad y el tipo de alojamiento. Una habitación individual, cuando la hay, suele estar en la parte alta de ese abanico.',
+        { cifra: window.RumboNorteCifras.nota },
         { h3: 'El límite legal del descuento' },
         'Esto es lo importante y casi nadie lo sabe: la ley permite descontar el alojamiento directamente de la nómina, pero **con un tope del 25 % del salario mínimo** que te corresponda, y solo si **el alojamiento está certificado por SNF** (o un sistema equivalente reconocido).',
         'En la práctica: con el salario mínimo a jornada completa, ese 25 % viene a ser **unos 150 € semanales**. Si te están descontando por encima de eso, o el alojamiento no aparece en el registro SNF, hay un problema y tienes con qué reclamar.',
@@ -231,6 +233,7 @@ window.RumboNorteContenido.guia = {
         { h3: 'El seguro médico' },
         'En cuanto empiezas a trabajar en Países Bajos **estás obligado por ley a contratar un seguro médico neerlandés** (*zorgverzekering*), tengas o no tarjeta sanitaria europea. Tienes un plazo corto para hacerlo y hay multas si no lo haces.',
         'La póliza básica ronda los **140 € al mes** y muchas agencias tienen un acuerdo colectivo más barato que te descuentan de la nómina. Además existe una ayuda del Estado, la ***zorgtoeslag***, para rentas bajas: se pide con el DigiD y para muchos trabajadores cubre buena parte de la cuota. No es automática: **hay que solicitarla**, y mucha gente no lo hace.',
+        { cifra: window.RumboNorteCifras.nota },
         {
           ul: [
             '[toeslagen.nl](https://www.toeslagen.nl) — solicitud de la *zorgtoeslag*',
@@ -292,7 +295,8 @@ window.RumboNorteContenido.guia = {
             numeric: [1]
           }
         },
-        'Con los 326 € del ejemplo de nómina, eso deja **entre 200 y 255 € de ahorro real a la semana** si te administras. Ahí está el sentido de irse: no en el sueldo bruto, sino en lo que consigues apartar cada mes.',
+        { cifra: window.RumboNorteCifras.nota },
+        'Con los 326 € del ejemplo de nómina, eso dejaría **entre 200 y 255 € de ahorro a la semana** si te administras. Es un cálculo orientativo: tu caso dependerá de lo que cobres y de lo que te descuenten. Ahí está el sentido de irse: no en el sueldo bruto, sino en lo que consigues apartar cada mes.',
         {
           note: {
             title: 'Tres trucos que valen dinero de verdad',

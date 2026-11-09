@@ -48,3 +48,9 @@ window.RumboNorteContenido.comun = {
     ]
   }
 };
+
+// Nota corta (bajo cada cifra destacada) y aviso completo sobre las cifras. Mismo texto en toda la web.
+window.RumboNorteCifras = {
+  nota: 'Cifra orientativa, no definitiva. Depende de la agencia que te contrate, la ciudad, el puesto y el alojamiento.',
+  aviso: 'Todas las cifras de esta página son orientativas y no son una promesa. Lo que cobres y lo que te descuenten lo fija la agencia que te contrate como empleado, y depende de la ciudad, el puesto, las horas, los turnos y el alojamiento y su tipo. Las condiciones reales solo las sabrás cuando la agencia te las dé por escrito, y pueden ser distintas de las de este ejemplo.'
+};
