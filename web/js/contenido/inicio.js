@@ -394,7 +394,7 @@ window.RumboNorteContenido.inicio = {
         blocks: [
           {
             ul: [
-              '**Sueldo:** en puestos sin cualificación se cobra el salario mínimo. En Países Bajos, para mayores de 21 años, es de 14,99 € brutos la hora (unos 15 €) desde el 1 de julio de 2026.',
+              '**Sueldo:** en puestos sin cualificación se cobra el salario mínimo. En Países Bajos, para mayores de 21 años, es de 15,29 € brutos la hora desde el 1 de enero de 2027 (hasta el 31 de diciembre de 2026, 14,99 €).',
               '**Alojamiento y transporte:** los organiza la agencia que te contrata como empleado, y los dos se descuentan del sueldo. Normalmente la casa y la habitación son compartidas, aunque depende de la agencia y del alojamiento.',
               '**Turnos:** pueden ser de mañana, tarde o noche.',
               '**Viaje:** el vuelo y el traslado hasta la oficina de la agencia o el alojamiento los pagas tú. Algunas agencias recogen en el aeropuerto, pero no todas.',
@@ -453,7 +453,7 @@ window.RumboNorteContenido.inicio = {
             blocks: [
               'Como orientación, calcula **entre 800 y 1.200 €** de colchón. Se van en el viaje, en comer las dos o tres primeras semanas hasta el primer cobro, en la fianza del alojamiento si la piden y en los primeros gastos sueltos.',
               { cifra: window.RumboNorteCifras.nota },
-              'Lo normal en el sector es **cobrar por semanas**, así que el primer ingreso suele llegar entre siete y catorce días después de empezar. Ese hueco es el que hay que cubrir. Ir sin colchón es el error más caro que veo.'
+              'Lo normal en el sector es **cobrar por semanas**, así que el primer pago suele llegar a las dos semanas de empezar. Ese hueco es el que hay que cubrir. Ir sin colchón es el error más caro que veo.'
             ]
           },
           {
