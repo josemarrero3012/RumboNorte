@@ -101,7 +101,9 @@
   }
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (name === 'inicio' && window.matchMedia('(min-width: 1360px)').matches) later('js/camino.js');
-  if (name === 'inicio' && !calm) later('js/heroe.js');
+  // El vuelo del hero no espera a que cargue toda la página: el avión está oculto hasta que despega.
+  if (name === 'inicio' && !calm) import(new URL('js/heroe.js', document.baseURI).href).then(function (m) { return m.mount(); })
+    .catch(function (e) { console.warn('Animación no disponible', e); });
   if (name === 'inicio' && !calm) later('js/proceso.js');
   if ((name === 'inicio' || name === 'metas') && !calm) later('js/cifras.js');
   if (!calm) later('js/titulos.js');

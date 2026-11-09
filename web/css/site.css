@@ -36,3 +36,5 @@ html { scroll-behavior: smooth; }
 .rn-check-note { color: var(--charcoal-muted); }
 /* Perfiles: el acordeón reparte el ancho según cuántos perfiles haya (ahora ocho). */
 .rn-jobs { --rn-slim: 76px; --rn-open: calc(min(1216px, 100cqi - 64px) - (var(--rn-n, 6) - 1) * (var(--rn-slim) + var(--rn-gap))); }
+/* Hero: con movimiento permitido el avión y la chincheta no se pintan quietos antes del vuelo; js/heroe.js los hace aparecer. */
+@media (prefers-reduced-motion: no-preference) { .rn-hero-map-plane, .rn-hero-map-pin { opacity: 0; } }
