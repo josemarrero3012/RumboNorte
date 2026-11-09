@@ -1,0 +1,138 @@
+/* Orbes flotantes: WhatsApp (abajo) y la brújula, el asistente (encima). Los dos en naranja.
+   WhatsApp es un disco liso; la brújula lleva el canto blanco de los sellos de la web y una
+   aguja que busca el norte. */
+:root { --rn-orb: 56px; --rn-orb-edge: 16px; --rn-orb-gap: 12px; }
+@media (min-width: 768px) { :root { --rn-orb-edge: 24px; } }
+
+/* ---- WhatsApp */
+.rn-wa-orb { position: fixed; right: var(--rn-orb-edge); bottom: var(--rn-orb-edge); z-index: 60; display: grid; place-items: center; width: var(--rn-orb); height: var(--rn-orb); border-radius: 50%; background: var(--orange); color: var(--navy); box-shadow: 0 8px 24px rgba(11, 37, 67, .28); transition: transform .2s ease, opacity .25s ease, box-shadow .2s ease; }
+.rn-wa-orb svg { width: 28px; height: 28px; fill: currentColor; }
+.rn-wa-orb:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(194, 68, 0, .4); }
+.rn-wa-orb:focus-visible { outline: 3px solid var(--navy); outline-offset: 4px; }
+.rn-wa-orb.is-away { opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; }
+
+/* ---- La brújula: el orbe */
+.rn-bru { --rn-bru-bottom: calc(var(--rn-orb-edge) + var(--rn-orb) + var(--rn-orb-gap)); font-family: var(--font-sans); }
+.rn-bru-orb { position: fixed; right: var(--rn-orb-edge); bottom: var(--rn-bru-bottom); z-index: 60; display: grid; place-items: center; width: var(--rn-orb); height: var(--rn-orb); padding: 0; border: 0; border-radius: 50%; background: var(--orange); color: var(--navy); box-shadow: 0 0 0 3px var(--surface), 0 8px 24px rgba(11, 37, 67, .3); cursor: pointer; opacity: 0; transform: scale(.6); transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), opacity .25s ease, background-color .2s ease, box-shadow .2s ease; }
+.rn-bru.is-ready .rn-bru-orb { opacity: 1; transform: none; }
+.rn-bru.is-ready .rn-bru-orb:hover { transform: rotate(-8deg) scale(1.06); }
+.rn-bru-orb:focus-visible { outline: 3px solid var(--navy); outline-offset: 5px; }
+.rn-bru-orb > svg { grid-area: 1 / 1; width: 44px; height: 44px; transition: opacity .2s ease, transform .3s ease; }
+.rn-bru-x { width: 26px !important; height: 26px !important; opacity: 0; transform: rotate(-90deg); color: var(--orange); }
+.rn-bru.is-open .rn-bru-orb { background: var(--navy); box-shadow: 0 0 0 3px var(--orange), 0 8px 24px rgba(11, 37, 67, .3); }
+.rn-bru.is-open .rn-bru-face { opacity: 0; transform: rotate(90deg) scale(.6); }
+.rn-bru.is-open .rn-bru-x { opacity: 1; transform: none; }
+.rn-bru.is-away:not(.is-open) .rn-bru-orb, .rn-bru.is-away:not(.is-open) .rn-bru-tip { opacity: 0; transform: translateY(12px) scale(.9); pointer-events: none; }
+
+/* Esfera de la brújula: aguja de dos puntas, norte macizo y sur hueco. */
+.rn-bru-dial { fill: none; stroke: currentColor; stroke-width: 1.6; opacity: .35; }
+.rn-bru-tick { stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.rn-bru-tick.is-minor { stroke-width: 1.6; opacity: .5; }
+.rn-bru-needle { transform-box: view-box; transform-origin: 24px 24px; }
+.rn-bru-n { fill: currentColor; }
+.rn-bru-s { fill: var(--surface); stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
+.rn-bru-pin { fill: var(--surface); stroke: currentColor; stroke-width: 1.4; }
+/* En reposo la aguja oscila y se asienta, como una brújula de verdad; al pasar por encima apunta firme al norte. */
+.rn-bru-face .rn-bru-needle { animation: rn-bru-settle 7s ease-in-out infinite; }
+.rn-bru-orb:hover .rn-bru-needle { animation: none; transform: rotate(0); transition: transform .4s cubic-bezier(.34, 1.56, .64, 1); }
+@keyframes rn-bru-settle {
+  0%, 62%, 100% { transform: rotate(0); }
+  68% { transform: rotate(-26deg); }
+  75% { transform: rotate(16deg); }
+  81% { transform: rotate(-8deg); }
+  87% { transform: rotate(3deg); }
+}
+
+/* Aviso «¿Dudas? Pregúntame», una vez por visita. */
+.rn-bru-tip { position: fixed; z-index: 60; right: calc(var(--rn-orb-edge) + var(--rn-orb) + 14px); bottom: calc(var(--rn-bru-bottom) + 12px); padding: 6px 14px; border-radius: var(--radius-pill); background: var(--navy); color: var(--on-navy); font-size: 15px; line-height: 20px; font-weight: 700; white-space: nowrap; pointer-events: none; opacity: 0; transform: translateX(8px); transition: opacity .3s ease, transform .3s ease; }
+.rn-bru-tip::after { content: ""; position: absolute; right: -5px; top: 50%; width: 10px; height: 10px; margin-top: -5px; background: inherit; transform: rotate(45deg); border-radius: 2px; }
+.rn-bru.show-tip:not(.is-open) .rn-bru-tip { opacity: 1; transform: none; }
+
+/* ---- La tarjeta */
+.rn-bru-panel { position: fixed; z-index: 61; right: var(--rn-orb-edge); bottom: calc(var(--rn-bru-bottom) + var(--rn-orb) + var(--rn-orb-gap)); display: flex; flex-direction: column; width: min(400px, calc(100vw - 2 * var(--rn-orb-edge))); max-height: min(600px, calc(100svh - var(--rn-bru-bottom) - var(--rn-orb) - var(--rn-orb-gap) - 16px)); overflow: hidden; border-radius: var(--radius-md); background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px rgba(11, 37, 67, .08), 0 24px 60px rgba(11, 37, 67, .3); transform-origin: calc(100% - 28px) 100%; animation: rn-bru-in .32s cubic-bezier(.34, 1.4, .64, 1); }
+.rn-bru-panel[hidden] { display: none; }
+@keyframes rn-bru-in { from { opacity: 0; transform: translateY(16px) scale(.92); } }
+
+.rn-bru-head { display: flex; align-items: center; gap: 12px; padding: 14px 10px 14px 16px; background: var(--navy); color: var(--on-navy); }
+.rn-bru-headface { flex: none; width: 42px; height: 42px; color: var(--orange); }
+.rn-bru-headface .rn-bru-dial { stroke: var(--on-navy); opacity: .3; }
+.rn-bru-headface .rn-bru-tick { stroke: var(--on-navy); }
+.rn-bru-headface .rn-bru-s, .rn-bru-headface .rn-bru-pin { fill: var(--navy); stroke: var(--on-navy); }
+.rn-bru-headface .rn-bru-needle { transition: transform .8s cubic-bezier(.34, 1.56, .64, 1); }
+.rn-bru.is-thinking .rn-bru-headface .rn-bru-needle { animation: rn-spin .7s linear infinite; }
+.rn-bru-titles { flex: 1; min-width: 0; }
+.rn-bru-title { margin: 0; font-family: var(--font-display); font-size: 26px; line-height: 30px; letter-spacing: .5px; text-transform: uppercase; }
+.rn-bru-status { display: block; overflow: hidden; color: var(--on-navy-muted); white-space: nowrap; text-overflow: ellipsis; font-size: 15px; line-height: 20px; }
+.rn-bru-icon { display: grid; place-items: center; flex: none; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--on-navy); cursor: pointer; transition: background-color .15s ease; }
+.rn-bru-icon svg { width: 22px; height: 22px; }
+.rn-bru-icon:hover { background: var(--navy-raised); }
+.rn-bru-icon:focus-visible { outline: 3px solid var(--orange); outline-offset: -3px; }
+.rn-bru-icon[hidden] { display: none; }
+
+/* Franja de ruta bajo la cabecera: avanza mientras busca. */
+.rn-bru-route { flex: none; height: 4px; background: repeating-linear-gradient(90deg, var(--orange) 0 14px, transparent 14px 22px); background-size: 22px 4px; }
+.rn-bru.is-thinking .rn-bru-route { animation: rn-bru-route .5s linear infinite; }
+@keyframes rn-bru-route { to { background-position: 22px 0; } }
+
+.rn-bru-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px; padding: 16px; outline: none; }
+.rn-bru-hello { margin: 0; color: var(--charcoal-muted); font-size: 15px; line-height: 22px; }
+.rn-bru-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.rn-bru-chips.is-next { margin-top: 2px; }
+.rn-bru-chip { min-height: 36px; padding: 6px 14px; border: 2px solid var(--navy); border-radius: var(--radius-pill); background: var(--surface); color: var(--navy); font: inherit; font-size: 15px; line-height: 20px; font-weight: 600; text-align: left; cursor: pointer; transition: background-color .15s ease, color .15s ease, transform .15s ease; }
+.rn-bru-chip:hover { background: var(--navy); color: var(--on-navy); }
+.rn-bru-chip:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.rn-bru-chip.is-flow, .rn-bru-chip.is-yes { border-color: var(--orange); background: var(--orange); color: var(--on-orange); font-weight: 700; }
+.rn-bru-chip.is-flow:hover, .rn-bru-chip.is-yes:hover { border-color: var(--orange-deep); background: var(--orange-deep); color: var(--surface); }
+
+/* La pregunta, a la derecha en azul; la respuesta, a la izquierda con el canto naranja de los avisos. */
+.rn-bru-asked { align-self: flex-end; max-width: 85%; margin: 0; padding: 8px 14px; border-radius: 16px 16px 4px 16px; background: var(--navy); color: var(--on-navy); font-size: 15px; line-height: 22px; overflow-wrap: anywhere; }
+.rn-bru-answer { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-left: 4px solid var(--orange); border-radius: 4px 16px 16px 4px; background: var(--surface-tint); outline: none; }
+.rn-bru-answer:focus-visible { box-shadow: 0 0 0 3px var(--navy); }
+.rn-bru-answer.is-new > * { animation: rn-bru-line .4s cubic-bezier(.2, .7, .3, 1) both; }
+.rn-bru-answer.is-new > :nth-child(2) { animation-delay: .08s; }
+.rn-bru-answer.is-new > :nth-child(3) { animation-delay: .16s; }
+.rn-bru-answer.is-new > :nth-child(4) { animation-delay: .24s; }
+@keyframes rn-bru-line { from { opacity: 0; transform: translateX(-10px); } }
+.rn-bru-text { margin: 0; font-size: 16px; line-height: 24px; }
+.rn-bru-text strong { font-weight: 700; }
+.rn-bru-text a { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-color: var(--orange); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.rn-bru-meta { margin: 0; color: var(--orange-deep); font-size: 15px; line-height: 20px; font-weight: 800; }
+.rn-bru-go { padding-top: 8px; border-top: 1px dashed rgba(11, 37, 67, .2); }
+.rn-bru-link { display: inline-flex; align-items: center; gap: 6px; color: var(--navy); font-size: 15px; line-height: 22px; font-weight: 700; text-decoration: none; }
+.rn-bru-link::after { content: "→"; color: var(--orange-deep); transition: transform .15s ease; }
+.rn-bru-link:hover::after { transform: translateX(3px); }
+.rn-bru-link:hover { text-decoration: underline; text-decoration-color: var(--orange); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.rn-bru-cta { display: flex; flex-wrap: wrap; gap: 8px; }
+.rn-bru-btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 2px solid transparent; border-radius: var(--radius-pill); font-size: 15px; line-height: 20px; font-weight: 700; text-decoration: none; transition: transform .15s ease, background-color .15s ease; }
+.rn-bru-btn:hover { transform: translateY(-2px); }
+.rn-bru-btn:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+.rn-bru-btn.is-wa { background: var(--orange); color: var(--on-orange); }
+.rn-bru-btn.is-line { border-color: var(--navy); color: var(--navy); }
+
+/* Mientras busca: una ruta de puntos que se va encendiendo. */
+.rn-bru-think { display: flex; gap: 7px; padding: 6px 2px; }
+.rn-bru-think i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); opacity: .2; animation: rn-bru-dot 1s ease-in-out infinite; }
+.rn-bru-think i:nth-child(2) { animation-delay: .1s; }
+.rn-bru-think i:nth-child(3) { animation-delay: .2s; }
+.rn-bru-think i:nth-child(4) { animation-delay: .3s; }
+.rn-bru-think i:nth-child(5) { animation-delay: .4s; }
+@keyframes rn-bru-dot { 40% { opacity: 1; transform: scale(1.25); } }
+
+.rn-bru-form { flex: none; display: flex; align-items: center; gap: 8px; padding: 10px 12px 6px; border-top: 1px solid var(--line); }
+.rn-bru-field { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border: 2px solid transparent; border-radius: var(--radius-pill); background: var(--stone-soft); color: var(--ink); font: inherit; font-size: 16px; transition: border-color .15s ease, background-color .15s ease; }
+.rn-bru-field::placeholder { color: var(--charcoal-muted); }
+.rn-bru-field:focus { outline: none; border-color: var(--navy); background: var(--surface); }
+.rn-bru-send { display: grid; place-items: center; flex: none; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%; background: var(--orange); color: var(--navy); cursor: pointer; transition: transform .2s ease, background-color .15s ease; }
+.rn-bru-send svg { width: 24px; height: 24px; }
+.rn-bru-send:hover { transform: translateY(-2px); }
+.rn-bru-send:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+.rn-bru-send:disabled { opacity: .5; cursor: default; transform: none; }
+.rn-bru-note { flex: none; margin: 0; padding: 0 16px 12px; color: var(--charcoal-muted); font-size: 15px; line-height: 20px; }
+.rn-bru-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rn-bru-orb, .rn-bru-panel, .rn-wa-orb, .rn-bru-tip { transition: none; animation: none; }
+  .rn-bru-face .rn-bru-needle, .rn-bru.is-thinking .rn-bru-headface .rn-bru-needle, .rn-bru.is-thinking .rn-bru-route, .rn-bru-think i { animation: none; }
+  .rn-bru-think i { opacity: .6; }
+}
+@media print { .rn-wa-orb, .rn-bru { display: none; } }
