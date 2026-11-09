@@ -29,7 +29,6 @@
         section(R.Profiles, d.perfiles, 'perfiles'),
         section(R.Process, d.proceso, 'proceso'),
         section(R.Faq, d.preguntas, 'preguntas'),
-        section(R.MoneyFlow, d.modelo, 'modelo'),
         section(R.GuideCallout, d.aviso, 'aviso'),
         section(R.Application, d.candidatura, 'candidatura')
       ]);
@@ -54,7 +53,6 @@
       var d = C.quien;
       return page('quienes-somos.html', [R.PageHero, d.hero], [
         section(R.Story, d.historia, 'historia'),
-        section(R.MoneyFlow, d.modelo, 'modelo'),
         section(R.Limits, d.limites, 'limites'),
         section(R.Cta, d.cta, 'cta')
       ]);
@@ -94,7 +92,7 @@
   // Animaciones con GSAP, cuando la página ya ha cargado: el camino del inicio, solo en pantallas
   // anchas donde hay margen para él, el vuelo del hero, los pasos del proceso, las cifras que cuentan,
   // los titulares de sección, los desplegables, los remates de cada sección, el progreso del formulario,
-  // la barra de lectura de la guía, el recorrido de Metas, la nómina de la guía y el flujo del dinero.
+  // la barra de lectura de la guía, el recorrido de Metas, y la nómina de la guía.
   function later(file) {
     window.addEventListener('load', function () {
       import(new URL(file, document.baseURI).href).then(function (m) { return m.mount(); })
@@ -113,5 +111,4 @@
   if (name === 'guia' && !calm) later('js/lectura.js');
   if (name === 'metas' && !calm) later('js/recorrido.js');
   if (name === 'guia') later('js/nomina.js');
-  if (name === 'inicio' || name === 'quien') later('js/flujo.js');
 })();

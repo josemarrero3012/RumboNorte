@@ -1,5 +1,5 @@
 // El formulario de candidatura acompaña mientras lo rellenas:
-// - una barra fija arriba con los cuatro bloques, que se llenan al completarlos,
+// - una barra fija arriba con los cinco bloques, que se llenan al completarlos,
 // - el número de cada bloque se marca en naranja al terminarlo,
 // - los campos con error se sacuden al intentar enviar,
 // - y cuando todo está listo, el botón de enviar lo dice con un latido.
@@ -13,7 +13,7 @@ export async function mount() {
   const form = document.querySelector('form.rn-form');
   if (!form) return;
   const parts = [...form.querySelectorAll('.rn-form-part')];
-  if (parts.length !== 4) return;
+  if (parts.length !== 5) return;
   const { gsap } = await loadGsap();
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const el = form.elements;
@@ -23,14 +23,15 @@ export async function mount() {
   // Lo mismo que pide la validación del envío: un bloque está completo cuando lo estaría para enviar.
   const rules = [
     () => value('nombre') !== '' && PHONE.test(value('telefono')) && MAIL.test(value('email')),
+    () => /^\d{2}$/.test(value('edad')) && value('nacionalidad_ue') !== '' && value('nivel_ingles') !== '',
     () => checked('destino') && checked('idiomas'),
-    () => value('carnet') !== '' && value('sector') !== '',
+    () => checked('carnet') && value('sector') !== '',
     () => checked('consentimiento_rgpd')
   ];
 
   const bar = document.createElement('div');
   bar.className = 'rn-form-progress';
-  bar.innerHTML = '<div class="rn-form-progress-bar" aria-hidden="true">' + '<span><i></i></span>'.repeat(4) + '</div><p aria-live="polite"></p>';
+  bar.innerHTML = '<div class="rn-form-progress-bar" aria-hidden="true">' + '<span><i></i></span>'.repeat(5) + '</div><p aria-live="polite"></p>';
   form.querySelector('.rn-form-head').after(bar);
   const fills = [...bar.querySelectorAll('i')];
   const label = bar.querySelector('p');

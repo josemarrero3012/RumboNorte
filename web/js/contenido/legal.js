@@ -34,7 +34,7 @@ window.RumboNorteContenido.legal = {
       },
       { h2: '2. Qué datos recogemos', id: 'datos' },
       'Únicamente los que tú nos facilitas de forma voluntaria. No obtenemos datos tuyos de ninguna otra fuente ni compramos bases de datos.',
-      '**A través del formulario de la web:** nombre y apellidos, número de WhatsApp con su prefijo, correo electrónico, idiomas, si tienes carnet de conducir, sector de interés, fecha de disponibilidad, edad y lo que escribas en el campo de mensaje libre.',
+      '**A través del formulario de la web:** nombre y apellidos, número de WhatsApp con su prefijo, correo electrónico, edad, si tienes nacionalidad o pasaporte de la Unión Europea, nivel de inglés, otros idiomas, carnets de conducir y certificados profesionales, sector de interés, fecha de disponibilidad y lo que escribas en el campo de mensaje libre.',
       '**A través de WhatsApp:** tu número de teléfono y el contenido de la conversación que mantengamos.',
       'No pedimos ni queremos datos especialmente protegidos: nada de salud, religión, afiliación sindical ni orientación política. Si escribes alguno en el campo libre, lo eliminaremos.',
       { h2: '3. Para qué los usamos y con qué base legal', id: 'finalidad' },
@@ -77,7 +77,7 @@ window.RumboNorteContenido.legal = {
           blocks: [
             'Si marcas la casilla de consentimiento, **tus datos se comunican a una o varias empresas de trabajo temporal establecidas en Países Bajos (con certificación SNA en vigor), Bélgica (acreditadas por su región) o Alemania (con permiso de cesión de la Bundesagentur für Arbeit)**, con la única finalidad de que valoren tu perfil y se pongan en contacto contigo.',
             'Esas empresas actúan como **responsables independientes** de los datos que reciben: a partir de ese momento aplican su propia política de privacidad, sobre la que nosotros no tenemos control.',
-            '**Te diremos siempre a qué empresa concreta se envían tus datos**, con su nombre legal y su número de registro mercantil, antes de enviar nada. Países Bajos, Bélgica y Alemania son Estados miembros de la Unión Europea, por lo que no hay transferencia internacional fuera del Espacio Económico Europeo.'
+            'Cuando te asignemos una vacante sabrás a qué empresa corresponde, para que puedas comprobarla en su registro. Países Bajos, Bélgica y Alemania son Estados miembros de la Unión Europea, por lo que no hay transferencia internacional fuera del Espacio Económico Europeo.'
           ]
         }
       },
@@ -140,7 +140,7 @@ window.RumboNorteContenido.legal = {
           tone: 'stone',
           blocks: [
             'Rumbo Norte es un servicio de reclutamiento independiente: selecciona candidatos y, con su consentimiento, los presenta a empresas de trabajo temporal certificadas de Países Bajos, Bélgica y Alemania. **No es una empresa de trabajo temporal ni el empleador del candidato**, no formaliza contratos de trabajo y no garantiza la obtención de un puesto. La relación laboral, cuando existe, se establece exclusivamente entre el candidato y la empresa de trabajo temporal neerlandesa correspondiente.',
-            'El servicio es **gratuito para el candidato** en todo momento. Rumbo Norte cobra de las agencias de trabajo temporal, nunca del candidato.',
+            'El servicio es **gratuito para el candidato** en todo momento. El candidato no paga nada en ningún momento.',
             'La información publicada en este sitio tiene finalidad divulgativa, está referida a la fecha en que se redactó y **no constituye asesoramiento legal, laboral ni fiscal**. Las cifras son orientativas y la normativa neerlandesa se actualiza periódicamente: comprueba siempre el dato en la fuente oficial enlazada antes de tomar una decisión.'
           ]
         }
@@ -186,7 +186,7 @@ window.RumboNorteContenido.legal = {
           { h2: 'Urheberrecht', id: 'urheberrecht' },
           'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.',
           { h2: 'Hinweis zur Tätigkeit', id: 'hinweis' },
-          'Rumbo Norte ist ein unabhängiger Recruiting-Dienst (Personalvermittlung). Es werden Bewerberinnen und Bewerber in Spanien ausgewählt und – nur mit ihrer Einwilligung – zertifizierten niederländischen Zeitarbeitsunternehmen vorgestellt. **Rumbo Norte ist kein Zeitarbeitsunternehmen und nicht Arbeitgeber der Bewerber.** Arbeitsverträge kommen ausschließlich zwischen Bewerber und Zeitarbeitsunternehmen zustande; eine Beschäftigung wird nicht garantiert. Für Bewerberinnen und Bewerber ist der Dienst in jedem Fall kostenlos, die Vergütung erfolgt ausschließlich durch die Unternehmen.'
+          'Rumbo Norte ist ein unabhängiger Recruiting-Dienst (Personalvermittlung). Es werden Bewerberinnen und Bewerber in Spanien ausgewählt und – nur mit ihrer Einwilligung – zertifizierten niederländischen Zeitarbeitsunternehmen vorgestellt. **Rumbo Norte ist kein Zeitarbeitsunternehmen und nicht Arbeitgeber der Bewerber.** Arbeitsverträge kommen ausschließlich zwischen Bewerber und Zeitarbeitsunternehmen zustande; eine Beschäftigung wird nicht garantiert. Für Bewerberinnen und Bewerber ist der Dienst in jedem Fall kostenlos.'
         ]
       },
       {
@@ -213,7 +213,7 @@ window.RumboNorteContenido.legal = {
       { h2: 'Derechos de autor', id: 'derechos-autor' },
       'Los contenidos y obras creados por el titular de esta web están sujetos a la legislación alemana de propiedad intelectual. La reproducción, edición, distribución y cualquier forma de explotación fuera de los límites de esa legislación requieren la autorización por escrito de su autor.',
       { h2: 'Advertencia sobre la actividad', id: 'actividad' },
-      'Rumbo Norte es un servicio de reclutamiento independiente. Selecciona candidatos en España y, solo con su consentimiento, los presenta a empresas de trabajo temporal neerlandesas certificadas. **No es una empresa de trabajo temporal ni el empleador del candidato.** Los contratos de trabajo se firman únicamente entre el candidato y la empresa de trabajo temporal, y no se garantiza la obtención de un puesto. El servicio es gratuito para el candidato en todo momento: lo pagan exclusivamente las empresas.',
+      'Rumbo Norte es un servicio de reclutamiento independiente. Selecciona candidatos en España y, solo con su consentimiento, los presenta a empresas de trabajo temporal neerlandesas certificadas. **No es una empresa de trabajo temporal ni el empleador del candidato.** Los contratos de trabajo se firman únicamente entre el candidato y la empresa de trabajo temporal, y no se garantiza la obtención de un puesto. El servicio es gratuito para el candidato en todo momento.',
       '[Ver también la política de privacidad](privacidad.html)'
     ]
   },

@@ -3,7 +3,7 @@
 import { loadGsap } from './gsap.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
-const CROSS = ['#destinos', '#perfiles', '#preguntas', '#modelo'];
+const CROSS = ['#destinos', '#perfiles', '#preguntas'];
 const END = '#candidatura';
 export async function mount() {
   const main = document.getElementById('contenido');

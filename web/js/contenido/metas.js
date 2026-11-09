@@ -114,6 +114,7 @@ window.RumboNorteContenido.metas = {
               { value: '7.000–9.500 €', label: 'En doce meses, si aguantas el ritmo' }
             ]
           },
+          { cifra: window.RumboNorteCifras.nota },
           'Los tres agujeros por los que se va el dinero de la gente, por orden: **los fines de semana** (una noche mala son 80 €, cuatro al mes son un coche al año), **los envíos a casa sin control** —manda, pero pon una cifra fija y no la muevas— y **la comida comprada hecha**. Cocinar en grupo con los del piso es el ahorro más grande y más fácil.',
           {
             note: {
@@ -171,6 +172,7 @@ window.RumboNorteContenido.metas = {
               { value: '~50 €/año', label: 'La *APK*, que es la ITV de allí' }
             ]
           },
+          { cifra: window.RumboNorteCifras.nota },
           'Súmale gasolina, que es cara. Cuenta con **150–250 € al mes** de coste real antes de moverlo. Si eso se come tu ahorro mensual, todavía no toca.',
           {
             note: {
@@ -205,6 +207,7 @@ window.RumboNorteContenido.metas = {
               { value: '1.500 €+', label: 'Lo mismo en Ámsterdam, Utrecht o La Haya' }
             ]
           },
+          { cifra: window.RumboNorteCifras.nota },
           'Dos cosas que casi nadie aprovecha: existe una **ayuda estatal al alquiler** (*huurtoeslag*) para rentas bajas cuando el alquiler no pasa de cierto tope; se pide con el DigiD en [toeslagen.nl](https://www.toeslagen.nl) y no es automática. Y existe la **vivienda social** (*sociale huurwoning*), muchísimo más barata, con listas de espera de años: por eso hay que apuntarse el primer año aunque no la necesites todavía. El tiempo en la lista es lo que vale.',
           { h4: 'Vivir en Alemania y trabajar en Países Bajos' },
           'Mucha gente que trabaja cerca de la frontera acaba alquilando en Alemania, en la zona de Renania del Norte-Westfalia, porque **por el mismo dinero se vive bastante mejor**. Es legal y es común. Pero infórmate antes, porque pasas a ser trabajador transfronterizo (*grensarbeider*) y eso cambia dos cosas importantes: **dónde tributas** y **cómo funciona tu seguro médico** (necesitarás el formulario S1 para poder ir al médico en Alemania con el seguro neerlandés). No es complicado, pero hay que hacerlo bien desde el principio.'

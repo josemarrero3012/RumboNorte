@@ -226,7 +226,7 @@
     // El país cambia mientras el hero está a la vista; se para con el ratón sobre el titular,
     // al bajar por la página o con la pestaña en segundo plano.
     React.useEffect(function () {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+      if (countries.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
       var seen = 'IntersectionObserver' in window ? new IntersectionObserver(function (e) { visible.current = e[0].isIntersecting; }) : null;
       if (seen) seen.observe(section.current);
       var timer = setInterval(function () {
@@ -257,6 +257,7 @@
             h('span', { className: 'rn-hero-line rn-hero-word', 'aria-hidden': 'true', style: { '--rn-letters': countries[index].length } },
               h('span', { className: 'rn-hero-lead-end-next' }, leadEnd + ' '),
               h('span', { key: index, className: 'rn-hero-country' }, countries[index]))),
+          props.also ? h('p', { className: 'rn-hero-also' }, props.also) : null,
           props.photoSrc ? h(Sticker, { className: 'rn-hero-sticker-a', text: props.ring || 'Rumbo Norte, trabajo en Europa', photoSrc: props.photoSrc }) : null,
           props.person ? h('p', { className: 'rn-hero-person' },
             h('strong', null, props.person.name), h('span', null, props.person.role)) : null,
@@ -269,6 +270,11 @@
       props.promises ? h('ul', { className: 'rn-hero-promises' },
         props.promises.map(function (p) { return h('li', { key: p }, p); })) : null,
       props.logos ? h(LogoStrip, { logos: props.logos }) : null);
+  }
+
+  // Nota corta bajo una cifra: siempre igual (asterisco y gris pequeño) para que se reconozca en toda la web.
+  function FigureNote(props) {
+    return h('p', { className: 'rn-figure-note' }, h('span', { 'aria-hidden': 'true' }, '* '), rich(props.text));
   }
 
   function TopicCard(props) {
@@ -285,6 +291,7 @@
         h('div', { className: 'rn-card-more' },
           it.figure ? h('p', { className: 'rn-card-figure' }, it.figure) : null,
           it.unit ? h('p', { className: 'rn-card-unit' }, it.unit) : null,
+          it.figureNote ? h(FigureNote, { text: it.figureNote }) : null,
           h('p', { className: 'rn-card-text' }, it.text),
           h('a', { className: 'rn-card-link', href: it.href || '#', 'aria-label': it.linkHint || null },
             h('span', { className: 'rn-card-link-text' }, it.linkLabel || 'Leer más'),
@@ -319,7 +326,7 @@
 
   function Countries(props) {
     var items = props.items || [];
-    var aState = React.useState(null), active = aState[0], setActive = aState[1];
+    var aState = React.useState(props.defaultId || null), active = aState[0], setActive = aState[1];
     var sState = React.useState(null), selected = sState[0], setSelected = sState[1];
     var rState = React.useState(false), ready = rState[0], setReady = rState[1];
     var dState = React.useState(false), side = dState[0], setSide = dState[1];
@@ -387,6 +394,7 @@
         }).then(function (s) {
           if (dead) { s.destroy(); return; }
           scene.current = s;
+          if (props.defaultId && !picked.current) s.setActive(props.defaultId);
           if (!picked.current) return;
           if (section.current.clientWidth > 1040) setSide(true);
           else frame(picked.current);
@@ -403,6 +411,7 @@
 
     function hover(id) {
       if (selected) return;
+      id = id || props.defaultId || null;
       setActive(id);
       if (scene.current) scene.current.setActive(id);
     }
@@ -434,12 +443,14 @@
               onBlur: function () { hover(null); },
               onClick: function (e) { e.preventDefault(); choose(c.id); }
             },
+              c.tag ? h('span', { className: cx('rn-place-tag', c.main && 'is-main') }, c.tag) : null,
               h('span', { className: 'rn-place-name' }, c.name),
               h('span', { className: 'rn-place-mode' }, props.placeLabel || 'Ver su ficha'));
           })),
         h('div', { className: 'rn-countries-panel', ref: panel },
           items.map(function (c) {
             return h('article', { key: c.id, id: c.id, className: 'rn-country', hidden: selected !== c.id, tabIndex: -1 },
+              c.tag ? h('p', { className: cx('rn-place-tag', c.main && 'is-main') }, c.tag) : null,
               h('h3', { className: 'rn-country-title' }, 'Trabajar en ' + c.name),
               h('p', { className: 'rn-country-text' }, rich(c.intro)),
               h('dl', { className: 'rn-country-facts' }, (c.facts || []).map(function (f) {
@@ -548,6 +559,7 @@
     if (b.lede) return h('p', { key: i, className: 'rn-lede' }, rich(b.lede));
     if (b.deck) return h('p', { key: i, className: 'rn-lede' }, rich(b.deck));
     if (b.small) return h('p', { key: i, className: 'rn-fine' }, rich(b.small));
+    if (b.cifra) return h(FigureNote, { key: i, text: b.cifra });
     if (b.h2) return h('h2', { key: i, id: b.id }, rich(b.h2));
     if (b.h3) return h('h3', { key: i, id: b.id }, rich(b.h3));
     if (b.h4) return h('h4', { key: i, id: b.id }, rich(b.h4));
@@ -633,7 +645,7 @@
 
     return h('section', { className: 'rn-section rn-section-stone', id: props.id }, h('div', { className: 'rn-section-inner' },
       h(Head, props),
-      h('ul', { className: cx('rn-jobs', !touched && 'is-auto'), ref: rail }, items.map(function (p, i) {
+      h('ul', { className: cx('rn-jobs', !touched && 'is-auto'), ref: rail, style: { '--rn-n': items.length } }, items.map(function (p, i) {
         var on = i === active;
         return h('li', { key: p.id, className: cx('rn-job', on && 'is-on'), onMouseEnter: function () { pick(i); } },
           h(JobPhoto, { photo: p.photo, focus: p.focus }),
@@ -648,6 +660,10 @@
       h('ol', { className: 'rn-jobs-dots', 'aria-hidden': 'true' }, items.map(function (p, i) {
         return h('li', { key: p.id, className: i === active ? 'is-on' : null });
       })),
+      props.requisitos ? h('aside', { className: 'rn-requisitos' },
+        h('h3', { className: 'rn-subtitle' }, props.requisitos.title),
+        h('ul', null, props.requisitos.items.map(function (x) { return h('li', { key: x }, rich(x)); })),
+        props.requisitos.text ? h('p', null, rich(props.requisitos.text)) : null) : null,
       props.note ? h('div', { className: 'rn-profiles-note' },
         h('h3', { className: 'rn-subtitle' }, props.note.title),
         h('div', { className: 'rn-prose' }, h(Blocks, { blocks: props.note.blocks }))) : null));
@@ -666,7 +682,8 @@
           h('div', null,
             h('p', { className: 'rn-step-when' }, s.when),
             h('h3', { className: 'rn-step-title' }, s.title),
-            h('p', { className: 'rn-step-text' }, rich(s.text))));
+            s.blocks ? h('div', { className: 'rn-step-text rn-step-blocks' }, h(Blocks, { blocks: s.blocks }))
+              : h('p', { className: 'rn-step-text' }, rich(s.text))));
       }))));
   }
 
@@ -736,12 +753,14 @@
 
   function Checks(props) {
     return h('fieldset', { className: 'rn-checks rn-field-wide' },
-      h('legend', null, props.label, h('span', { className: 'rn-field-hint' }, ' (' + props.hint + ')')),
+      h('legend', null, props.label, props.required ? h('span', { className: 'rn-req', 'aria-hidden': 'true' }, ' *') : null, h('span', { className: 'rn-field-hint' }, ' (' + props.hint + ')')),
       h('div', null, props.options.map(function (o) {
-        return h('label', { key: o, className: 'rn-check' },
-          h('input', { type: 'checkbox', name: props.name, value: o }),
-          h('span', null, o));
-      })));
+        var value = typeof o === 'string' ? o : o.value;
+        return h('label', { key: value, className: 'rn-check' },
+          h('input', { type: 'checkbox', name: props.name, value: value }),
+          h('span', null, value, o.note ? h('span', { className: 'rn-check-note' }, ' ' + o.note) : null));
+      })),
+      props.error ? h('p', { className: 'rn-field-error', id: 'f-' + props.name + '-error' }, props.error) : null);
   }
 
   function Part(props) {
@@ -765,7 +784,10 @@
       if (!String(fd.get('nombre')).trim()) e.nombre = 'Escribe tu nombre y apellidos.';
       if (!/^[\d\s()+-]{6,}$/.test(String(fd.get('telefono')).trim())) e.telefono = 'Escribe un número de WhatsApp válido.';
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(fd.get('email')).trim())) e.email = 'Escribe un correo válido, como tucorreo@ejemplo.com.';
-      if (!fd.get('carnet')) e.carnet = 'Elige una opción.';
+      if (!/^\d{2}$/.test(String(fd.get('edad')).trim())) e.edad = 'Escribe tu edad en números.';
+      if (!fd.get('nacionalidad_ue')) e.nacionalidad_ue = 'Elige una opción.';
+      if (!fd.get('nivel_ingles')) e.nivel_ingles = 'Elige tu nivel de inglés.';
+      if (!fd.getAll('carnet').length) e.carnet = 'Marca al menos una opción.';
       if (!fd.get('sector')) e.sector = 'Elige una opción.';
       if (!fd.get('consentimiento_rgpd')) e.consentimiento_rgpd = 'Sin esta casilla no puedo valorar tu candidatura.';
       return e;
@@ -779,9 +801,13 @@
       setErrors(e);
       setFailure('');
       var first = Object.keys(e)[0];
-      if (first) { ref.current.elements[first].focus(); return; }
+      if (first) {
+        var el = ref.current.elements[first];
+        (el && el.length && !el.tagName ? el[0] : el).focus();
+        return;
+      }
       // Netlify guarda un valor por campo: lo marcado va junto, separado por comas.
-      ['destino', 'idiomas'].forEach(function (name) {
+      ['destino', 'idiomas', 'carnet'].forEach(function (name) {
         var all = fd.getAll(name);
         fd.delete(name);
         fd.append(name, all.length ? all.join(', ') : '(ninguno marcado)');
@@ -852,17 +878,22 @@
               h('input', input('telefono', { type: 'tel', required: true, autoComplete: 'tel-national', inputMode: 'tel', placeholder: '600 000 000' })))),
           h(Field, { id: 'f-email', label: 'Correo electrónico', required: true, error: errors.email },
             h('input', input('email', { type: 'email', required: true, autoComplete: 'email', inputMode: 'email', placeholder: 'tucorreo@ejemplo.com' })))),
-        h(Part, { step: '02', title: 'Destino e idiomas' },
+        h(Part, { step: '02', title: 'Requisitos' },
+          h(Field, { id: 'f-edad', label: 'Edad', required: true, error: errors.edad },
+            h('input', input('edad', { type: 'text', required: true, inputMode: 'numeric', maxLength: 2, placeholder: 'Ej. 27', 'aria-describedby': errors.edad ? 'f-edad-error' : 'f-edad-hint' })),
+            h('p', { className: 'rn-field-help', id: 'f-edad-hint' }, form.edadHint)),
+          h(Field, { id: 'f-nacionalidad_ue', label: form.nacionalidad.label, required: true, error: errors.nacionalidad_ue }, select('nacionalidad_ue', form.nacionalidad.options)),
+          h(Field, { id: 'f-nivel_ingles', label: 'Nivel de inglés', required: true, wide: true, error: errors.nivel_ingles }, select('nivel_ingles', form.ingles))),
+        h(Part, { step: '03', title: 'Destino e idiomas' },
           h(Checks, { name: 'destino', label: '¿A qué país te gustaría ir?', hint: 'puedes marcar varios', options: form.destinos }),
-          h(Checks, { name: 'idiomas', label: 'Idiomas que hablas', hint: 'los que puedas usar en el trabajo', options: form.idiomas })),
-        h(Part, { step: '03', title: 'Tu perfil' },
-          h(Field, { id: 'f-carnet', label: 'Carnet de conducir', required: true, error: errors.carnet }, select('carnet', form.carnet)),
+          h(Checks, { name: 'idiomas', label: 'Otros idiomas que hablas', hint: 'los que puedas usar en el trabajo', options: form.idiomas })),
+        h(Part, { step: '04', title: 'Tu perfil' },
+          h(Checks, { name: 'carnet', label: 'Carnet de conducir y certificados', hint: 'marca todos los que tengas', options: form.carnet, required: true, error: errors.carnet }),
           h(Field, { id: 'f-sector', label: 'Sector que te interesa', required: true, error: errors.sector }, select('sector', form.sector)),
           h(Field, { id: 'f-disponibilidad', label: '¿Desde cuándo podrías viajar?' }, h('input', input('disponibilidad', { type: 'date' }))),
-          h(Field, { id: 'f-edad', label: 'Edad' }, h('input', input('edad', { type: 'text', inputMode: 'numeric', placeholder: 'Ej. 27' }))),
           h(Field, { id: 'f-mensaje', label: 'Tu experiencia, en dos líneas', hint: 'opcional', wide: true },
             h('textarea', input('mensaje', { rows: 3, placeholder: 'Dónde has trabajado y en qué, si vas con alguien o lo que más te preocupa.' })))),
-        h(Part, { step: '04', title: 'Consentimiento' },
+        h(Part, { step: '05', title: 'Consentimiento' },
           h('div', { className: 'rn-consent rn-field-wide' },
             h('label', null,
               h('input', input('consentimiento_rgpd', { type: 'checkbox', required: true, value: form.consentValue, className: null })),

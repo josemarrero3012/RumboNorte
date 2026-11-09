@@ -10,7 +10,7 @@ Sustituye a la versión anterior, [Norte-Claro](https://github.com/josemarrero30
 
 ## Qué incluye
 
-- **Inicio:** presentación, los tres países en una maqueta 3D, qué hace Iván y qué no, perfiles con ilustraciones animadas, el proceso en seis pasos, preguntas frecuentes, por qué es gratis y el formulario de candidatura.
+- **Inicio:** presentación, los tres países en una maqueta 3D, qué hace Iván y qué no, los requisitos y los perfiles con ilustraciones animadas, el proceso en seis pasos, preguntas frecuentes y el formulario de candidatura.
 - **La guía:** BSN, nómina línea a línea, alojamiento, coste de vida, contratos y cómo verificar una agencia.
 - **Metas:** lo que se puede conseguir en Países Bajos y en cuánto tiempo.
 - **Quién soy:** la historia de Iván y lo que no hace.
@@ -23,7 +23,7 @@ Pensada primero para móvil. Cada página llega ya pintada en HTML, así que se 
 Sin dependencias que instalar. React 18 se carga como archivo, sin compilador, y `build.mjs` usa Node para pintar cada página en HTML con sus datos para buscadores (Open Graph, JSON-LD, sitemap). Las tipografías se sirven desde la propia web.
 
 - **La maqueta de los países:** Three.js. Las placas se modelan por código en Blender, con la luz horneada en cada una.
-- **Las animaciones:** GSAP con ScrollTrigger. Son el camino naranja del inicio, la nómina que se va descontando en la guía y el flujo del dinero.
+- **Las animaciones:** GSAP con ScrollTrigger. Son el camino naranja del inicio y la nómina que se va descontando en la guía.
 - **Los perfiles de trabajo:** fotos ilustrativas en un acordeón; cada panel cerrado enseña una franja de su foto y al abrirse se ve entera.
 
 ## Probarla en local
@@ -96,6 +96,9 @@ Antes de publicar la versión definitiva:
 - Revisión de los textos legales tras el cambio de marca.
 - Confirmar que siguen vigentes las cifras de nómina, alojamiento y costes.
 - Probar en un teléfono real.
+- Fotos de los perfiles de camión y autobús: ahora llevan una imagen provisional (`web/assets/perfiles/camion*.webp` y `autobus*.webp`).
+- Confirmar con las agencias los requisitos de los conductores (carnet C/C+E o D, CAP y tacógrafo).
+- Actualizar el salario mínimo neerlandés (14,99 €/h desde el 1 de julio de 2026) en enero de 2027, en el proceso del inicio y en la guía.
 
 ## Derechos
 
