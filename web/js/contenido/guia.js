@@ -65,7 +65,7 @@ window.RumboNorteContenido.guia = {
       deck: 'Aquí es donde se rompen la mayoría de las expectativas. Entre lo que te dicen que vas a ganar y lo que te entra en la cuenta hay un trecho largo, y conviene recorrerlo antes de coger el avión.',
       blocks: [
         { h3: 'Primero: el salario por hora' },
-        'Países Bajos tiene un **salario mínimo por hora fijado por ley**, igual para todos los sectores, que se actualiza **el 1 de enero y el 1 de julio** de cada año. Desde el 1 de julio de 2026 es de **14,99 € brutos la hora** para mayores de 21 años, y sube en cada revisión.',
+        'Países Bajos tiene un **salario mínimo por hora fijado por ley**, igual para todos los sectores, que se actualiza **el 1 de enero y el 1 de julio** de cada año. Para mayores de 21 años es de **15,29 € brutos la hora desde el 1 de enero de 2027** (hasta el 31 de diciembre de 2026, 14,99 €), y sube en cada revisión.',
         'Cuando leas esto puede que ya haya cambiado. **Compruébalo tú, son treinta segundos:** [rijksoverheid.nl — minimumloon](https://www.rijksoverheid.nl/onderwerpen/minimumloon).',
         'Encima de ese mínimo, si la empresa cliente tiene su propio convenio, a menudo te corresponde **el mismo salario que a un empleado fijo de esa empresa haciendo tu trabajo**. Es lo que se llama la equiparación salarial y es un derecho, no un favor. Pregunta siempre si se te aplica.',
         { h3: 'Ejemplo completo de una semana' },
