@@ -9,7 +9,7 @@
 // Los dos orbes se apartan cuando asoma el final del pie, para no tapar los enlaces legales.
 
 const MIN_THINK = 650;
-const STORE = 'rn-brujula';
+const STORE = 'rn-brujula-' + ((window.RumboNorteIdioma || {}).code || 'es');
 const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ── Buscar la ficha
@@ -17,8 +17,10 @@ const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
    pregunta del botón o el texto) y lo rara que es. Se responde si la mejor ficha cubre al
    menos la mitad de la pregunta; si no, se dice que no está en la web. ─────────────────────────────────────────────────────── */
 
-const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9ñ€\s]/g, ' ');
-const STOP = new Set('a al algo como con cual de del el en es esta este esto hay la las le lo los me mi mis muy no o os para pero por que se si sin su sus te tu un una uno y ya yo tengo tiene tienen hace hacer puedo puede pueden quiero saber cuanto cuanta cuantos cuantas cual eso alli alla poco mucho bien mal cosa cosas ahi pasa vez estoy soy son ser estar voy ir eres sois cuales necesito necesita quisiera llevar llevo donde'.split(' '));
+// Sin tildes ni signos; la «ł» polaca no se descompone con NFD y se pasa a mano.
+const norm = (s) => s.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9€\s]/g, ' ');
+// Palabras vacías en español; cada traducción de asistente-datos.js puede traer las suyas (STOP).
+let STOP = new Set('a al algo como con cual de del el en es esta este esto hay la las le lo los me mi mis muy no o os para pero por que se si sin su sus te tu un una uno y ya yo tengo tiene tienen hace hacer puedo puede pueden quiero saber cuanto cuanta cuantos cuantas cual eso alli alla poco mucho bien mal cosa cosas ahi pasa vez estoy soy son ser estar voy ir eres sois cuales necesito necesita quisiera llevar llevo donde'.split(' '));
 // Raíz corta, sin la «r» del infinitivo ni la última vocal: «cobrar», «cobro» y «cobras» cuentan igual.
 const stem = (w) => w.slice(0, 5).replace(/(.{3})r$/, '$1').replace(/(.{3,})[aeiou]$/, '$1');
 const words = (s) => norm(s).split(/\s+/).filter((w) => w && !STOP.has(w)).map(stem);
@@ -52,7 +54,7 @@ export function index(fichas) {
 
 function waHref(msg) {
   const cfg = window.RumboNorteConfig || {};
-  const text = msg || cfg.mensaje || '';
+  const text = msg || (window.RumboNorteTextos || {}).whatsappMensaje || cfg.mensaje || '';
   return 'https://wa.me/' + (cfg.whatsapp || '') + (text ? '?text=' + encodeURIComponent(text) : '');
 }
 
@@ -111,7 +113,11 @@ const RESTART = '<path d="M12 24a12 12 0 1 0 3.6-8.5M12 11v7h7" fill="none" stro
 /* ── Montaje ─────────────────────────────────────────────────────────────── */
 
 export async function mount() {
-  const D = await import(new URL('asistente-datos.js', import.meta.url).href);
+  // Las fichas del idioma de la página: js/asistente-datos.js en español, js/<idioma>/asistente-datos.js en el resto.
+  const lang = (window.RumboNorteIdioma || {}).code || 'es';
+  const X = (window.RumboNorteTextos || {}).asistente || {};
+  const D = await import(new URL((lang === 'es' ? '' : lang + '/') + 'asistente-datos.js', import.meta.url).href);
+  if (D.STOP) STOP = new Set(D.STOP.split(' '));
   const { FICHAS, REQUISITOS: R } = D;
   const rank = index(FICHAS);
   const byId = Object.fromEntries(FICHAS.map((f, i) => [f.id, i]));
@@ -124,33 +130,33 @@ export async function mount() {
   let open = false, thinking = false, timer = 0, labelTimer = 0;
 
   /* Orbe */
-  const orb = el('button', { type: 'button', class: 'rn-bru-orb', 'aria-expanded': 'false', 'aria-controls': 'rn-bru-panel', 'aria-label': 'Abrir el asistente: pregúntame' },
+  const orb = el('button', { type: 'button', class: 'rn-bru-orb', 'aria-expanded': 'false', 'aria-controls': 'rn-bru-panel', 'aria-label': X.abrir },
     svg(DIAL + NEEDLE, 'rn-bru-face'),
     svg(CLOSE, 'rn-bru-x'));
-  const tip = el('span', { class: 'rn-bru-tip', 'aria-hidden': 'true' }, '¿Dudas? Pregúntame');
+  const tip = el('span', { class: 'rn-bru-tip', 'aria-hidden': 'true' }, X.burbuja);
 
   /* Tarjeta */
   const headNeedle = svg(DIAL + NEEDLE, 'rn-bru-headface');
-  const status = el('span', { class: 'rn-bru-status' }, 'Asistente de Rumbo Norte');
-  const restartBtn = el('button', { type: 'button', class: 'rn-bru-icon', 'aria-label': 'Empezar de nuevo', title: 'Empezar de nuevo', onclick: restart }, svg(RESTART));
-  const closeBtn = el('button', { type: 'button', class: 'rn-bru-icon', 'aria-label': 'Cerrar el asistente', onclick: () => close(true) }, svg(CLOSE));
+  const status = el('span', { class: 'rn-bru-status' }, X.titulo);
+  const restartBtn = el('button', { type: 'button', class: 'rn-bru-icon', 'aria-label': X.reiniciar, title: X.reiniciar, onclick: restart }, svg(RESTART));
+  const closeBtn = el('button', { type: 'button', class: 'rn-bru-icon', 'aria-label': X.cerrar, onclick: () => close(true) }, svg(CLOSE));
   const body = el('div', { class: 'rn-bru-body', tabindex: '-1' });
-  const input = el('input', { class: 'rn-bru-field', type: 'text', maxlength: '200', placeholder: 'Escribe tu pregunta…', 'aria-label': 'Escribe tu pregunta', autocomplete: 'off', enterkeyhint: 'send' });
-  const send = el('button', { type: 'submit', class: 'rn-bru-send', 'aria-label': 'Enviar pregunta' }, svg(ARROW_UP));
+  const input = el('input', { class: 'rn-bru-field', type: 'text', maxlength: '200', placeholder: X.placeholder, 'aria-label': X.etiqueta, autocomplete: 'off', enterkeyhint: 'send' });
+  const send = el('button', { type: 'submit', class: 'rn-bru-send', 'aria-label': X.enviar }, svg(ARROW_UP));
   const form = el('form', { class: 'rn-bru-form', onsubmit: (e) => { e.preventDefault(); ask(input.value); } }, input, send);
   const live = el('div', { class: 'rn-bru-sr', role: 'status', 'aria-live': 'polite' });
-  const panel = el('div', { id: 'rn-bru-panel', class: 'rn-bru-panel', role: 'dialog', 'aria-label': 'Asistente de Rumbo Norte', hidden: true },
+  const panel = el('div', { id: 'rn-bru-panel', class: 'rn-bru-panel', role: 'dialog', 'aria-label': X.titulo, hidden: true },
     el('header', { class: 'rn-bru-head' },
       headNeedle,
-      el('div', { class: 'rn-bru-titles' }, el('p', { class: 'rn-bru-title' }, 'Pregúntame'), status),
+      el('div', { class: 'rn-bru-titles' }, el('p', { class: 'rn-bru-title' }, X.tituloCorto), status),
       restartBtn, closeBtn),
     el('div', { class: 'rn-bru-route', 'aria-hidden': 'true' }),
     body,
     form,
-    el('p', { class: 'rn-bru-note' }, 'Respondo con lo que dice la web. Cifras orientativas.'),
+    el('p', { class: 'rn-bru-note' }, X.nota),
     live);
 
-  const root = el('aside', { class: 'rn-bru', 'aria-label': 'Asistente' }, panel, tip, orb);
+  const root = el('aside', { class: 'rn-bru', 'aria-label': X.region }, panel, tip, orb);
   document.body.append(root);
   const wa = document.querySelector('.rn-wa-orb');
   requestAnimationFrame(() => root.classList.add('is-ready'));
@@ -183,7 +189,7 @@ export async function mount() {
     document.body.classList.toggle('rn-bru-open', v);
     panel.hidden = !v;
     orb.setAttribute('aria-expanded', String(v));
-    orb.setAttribute('aria-label', v ? 'Cerrar el asistente' : 'Abrir el asistente: pregúntame');
+    orb.setAttribute('aria-label', v ? X.cerrar : X.abrir);
     if (v) {
       render();
       input.focus({ preventScroll: true });
@@ -208,7 +214,7 @@ export async function mount() {
       thinking = false;
       clearInterval(labelTimer);
       root.classList.remove('is-thinking');
-      status.textContent = 'Asistente de Rumbo Norte';
+      status.textContent = X.titulo;
       then();
       save();
       render(true);
@@ -315,21 +321,21 @@ export async function mount() {
             el('a', { class: 'rn-bru-btn is-line', href: './#candidatura', onclick: () => close(false) }, R.form))
         ] : [
           el('p', { class: 'rn-bru-text' }, rich(R.no.replace('{fallo}', R.fallos[m.fallo]))),
-          go('./#perfiles', 'Ver los requisitos')
+          go('./#perfiles', X.requisitos)
         ], anim, isLast));
       } else if (m.from === 'nose') {
         const near = rank(m.q).filter((s) => FICHAS[s.i].label).slice(0, 3);
         body.append(answer([
           el('p', { class: 'rn-bru-text' }, D.NO_SE),
-          near.length ? el('p', { class: 'rn-bru-meta' }, '¿Quizá buscabas esto?') : null,
+          near.length ? el('p', { class: 'rn-bru-meta' }, X.quiza) : null,
           near.length ? el('ul', { class: 'rn-bru-chips' }, near.map((s) => chip(FICHAS[s.i].label, () => show(s.i)))) : null,
-          el('div', { class: 'rn-bru-cta' }, el('a', { class: 'rn-bru-btn is-wa', href: waHref('Hola Iván. Tengo una pregunta: ' + m.q), target: '_blank', rel: 'noopener' }, 'Preguntar a Iván'))
+          el('div', { class: 'rn-bru-cta' }, el('a', { class: 'rn-bru-btn is-wa', href: waHref(X.preguntaIvan + m.q), target: '_blank', rel: 'noopener' }, X.preguntarIvan))
         ], anim, isLast));
       } else if (m.from === 'bot') {
         const f = FICHAS[m.ficha];
         body.append(answer([
           el('p', { class: 'rn-bru-text' }, rich(f.text)),
-          f.whatsapp ? el('div', { class: 'rn-bru-cta' }, el('a', { class: 'rn-bru-btn is-wa', href: waHref(), target: '_blank', rel: 'noopener' }, 'Abrir WhatsApp')) : null,
+          f.whatsapp ? el('div', { class: 'rn-bru-cta' }, el('a', { class: 'rn-bru-btn is-wa', href: waHref(), target: '_blank', rel: 'noopener' }, X.abrirWhatsapp)) : null,
           f.href ? go(f.href, f.link) : null
         ], anim, isLast));
       }
@@ -361,7 +367,7 @@ export async function mount() {
     // Lector de pantalla: el texto de la última respuesta.
     const texts = body.querySelectorAll('.rn-bru-answer .rn-bru-text');
     const lastAnswer = texts[texts.length - 1];
-    live.textContent = thinking ? 'Buscando la respuesta…' : animateLast && lastAnswer ? lastAnswer.textContent : '';
+    live.textContent = thinking ? X.buscando : animateLast && lastAnswer ? lastAnswer.textContent : '';
     if (!thinking && animateLast && document.activeElement !== input && open) {
       const a = body.querySelector('.rn-bru-answer[tabindex]');
       if (a) a.focus({ preventScroll: true });

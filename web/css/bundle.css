@@ -252,7 +252,11 @@ body { margin: 0; font-family: var(--font-sans); background: var(--surface); col
 .rn-payslip-amount { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rn-prose .rn-payslip-row.is-total { border-top: 2px solid var(--charcoal); font-weight: 800; }
 .rn-prose .rn-payslip-row.is-sub { font-weight: 700; }
-.rn-payslip.is-live .rn-payslip-row:not(.is-done) { opacity: .3; }
+/* Las filas que faltan por descontar se distinguen por color y marcador, no por transparencia:
+   el texto mantiene el contraste (6,6:1) en todos los pasos de la animación. */
+.rn-payslip.is-live .rn-payslip-row { box-shadow: inset 3px 0 0 transparent; transition: box-shadow .3s ease; }
+.rn-payslip.is-live .rn-payslip-row:not(.is-done), .rn-payslip.is-live .rn-payslip-row:not(.is-done) strong { color: var(--charcoal-muted); }
+.rn-payslip.is-live .rn-payslip-row.is-now { box-shadow: inset 3px 0 0 var(--orange); }
 .rn-payslip.is-live .rn-payslip-row.is-now .rn-payslip-amount { color: var(--orange-deep); font-weight: 800; }
 
 /* Disclosure */

@@ -2,8 +2,9 @@
 // Sirve para cualquier texto con números («1.250–1.500 €», «~50 €/año», «2 registros»): solo se mueven los números.
 import { loadGsap } from './gsap.js';
 
-const NUM = /\d{1,3}(?:\.\d{3})+|\d+/g;
-const dots = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+// Miles con punto («1.250», español) o con coma («1,250», inglés): se cuenta conservando el separador.
+const NUM = /\d{1,3}(?:[.,]\d{3})+|\d+/g;
+const group = (n, sep) => (sep ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep) : String(n));
 
 export async function mount() {
   const cards = [...document.querySelectorAll('.rn-card')].filter((c) => c.querySelector('.rn-card-figure'));
@@ -13,8 +14,8 @@ export async function mount() {
 
   function frame(final, t) {
     let i = 0;
-    const values = [...final.matchAll(NUM)].map((m) => +m[0].replace(/\./g, ''));
-    return final.replace(NUM, () => dots(Math.round(values[i++] * t)));
+    const nums = [...final.matchAll(NUM)].map((m) => ({ v: +m[0].replace(/[.,]/g, ''), sep: (/[.,]/.exec(m[0]) || [''])[0] }));
+    return final.replace(NUM, () => { const n = nums[i++]; return group(Math.round(n.v * t), n.sep); });
   }
 
   function count(el, delay = 0) {

@@ -21,13 +21,17 @@ export async function mount() {
   const checked = (name) => [...form.querySelectorAll(`input[name="${name}"]`)].some((i) => i.checked);
 
   // Lo mismo que pide la validación del envío: un bloque está completo cuando lo estaría para enviar.
+  // El bloque 3 (destino e idiomas) es opcional: se marca si se ha rellenado algo, pero no cuenta
+  // para «todo listo», así que una candidatura válida siempre puede llegar al 100 %.
   const rules = [
     () => value('nombre') !== '' && PHONE.test(value('telefono')) && MAIL.test(value('email')),
     () => /^\d{2}$/.test(value('edad')) && value('nacionalidad_ue') !== '' && value('nivel_ingles') !== '',
-    () => checked('destino') && checked('idiomas'),
+    () => checked('destino') || checked('idiomas'),
     () => checked('carnet') && value('sector') !== '',
     () => checked('consentimiento_rgpd')
   ];
+  const OPTIONAL = 2;
+  const L = (window.RumboNorteTextos || {}).form || {};
 
   const bar = document.createElement('div');
   bar.className = 'rn-form-progress';
@@ -47,9 +51,10 @@ export async function mount() {
       if (ok && !first && !calm) gsap.fromTo(parts[i].querySelector('.rn-form-step'), { scale: .6 }, { scale: 1, duration: .5, ease: 'back.out(3)' });
     });
     done = now;
-    const count = now.filter(Boolean).length;
-    const all = count === now.length;
-    label.textContent = all ? 'Todo listo: ya puedes enviarla.' : `${count} de ${now.length} bloques completos`;
+    const required = now.filter((ok, i) => i !== OPTIONAL);
+    const count = required.filter(Boolean).length;
+    const all = count === required.length;
+    label.textContent = all ? L.listo : L.progreso.replace('{n}', count).replace('{total}', required.length);
     bar.classList.toggle('is-ready', all);
     if (all && !ready && !first && !calm) gsap.fromTo(submit, { scale: 1 }, { scale: 1.06, duration: .18, yoyo: true, repeat: 3, ease: 'sine.inOut' });
     ready = all;

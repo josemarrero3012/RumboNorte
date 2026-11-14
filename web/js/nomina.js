@@ -1,7 +1,10 @@
 // La nómina de la guía se va restando con el scroll: la sección queda fija y cada descuento recorta la barra.
 import { loadGsap } from './gsap.js';
 
-const money = (v) => v.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+// Euros con el formato del idioma de la página: «326,00 €» en español, «€326.00» en inglés.
+const LOCALES = { es: 'es-ES', en: 'en-GB', pl: 'pl-PL', pt: 'pt-PT' };
+const locale = LOCALES[document.documentElement.lang] || 'es-ES';
+const money = (v) => v.toLocaleString(locale, { style: 'currency', currency: 'EUR' });
 
 export async function mount() {
   const box = document.querySelector('.rn-payslip');

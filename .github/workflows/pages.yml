@@ -24,6 +24,8 @@ jobs:
           node-version: 24
       - name: Generar la web en la subcarpeta del repositorio
         run: BASE=/${{ github.event.repository.name }} node build.mjs
+      - name: Comprobar traducciones, enlaces y páginas (si falla, no se publica)
+        run: node herramientas/comprobar.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

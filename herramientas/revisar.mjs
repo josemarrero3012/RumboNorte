@@ -169,15 +169,19 @@ function words() {
   }
 }
 
-const steps = { coverage, screens, form, noScript };
+// «coverage» compara con la web vieja publicada: solo informa y se pide aparte (revisar.mjs coverage).
+const steps = { screens, form, noScript };
+if (only === 'coverage') steps.coverage = coverage;
 words();
 const urls = links();
-if (!only || only === 'externos') await outside(urls);
+// Los enlaces externos dependen de terceros: se revisan solo si se pide (revisar.mjs externos).
+if (only === 'externos') await outside(urls);
 for (const [name, fn] of Object.entries(steps)) {
   if (only && only !== name) continue;
   console.log(`· ${name}`);
   await fn();
 }
 server.close();
-console.log(problems.length ? `\n${problems.length} avisos:\n${problems.join('\n')}` : '\nTodo correcto.');
-process.exit(0);
+console.log(problems.length ? `\n${problems.length} problemas:\n${problems.join('\n')}` : '\nTodo correcto.');
+// Con problemas termina con error, para que CI no publique.
+process.exit(problems.length ? 1 : 0);

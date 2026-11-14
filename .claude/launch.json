@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "web", "runtimeExecutable": "python3", "runtimeArgs": ["dev.py"], "port": 4321 }
+    { "name": "web", "runtimeExecutable": "python3", "runtimeArgs": ["dev.py"], "port": 4321 },
+    { "name": "dist", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4322", "-d", "dist", "--bind", "127.0.0.1"], "port": 4322 }
   ]
 }

@@ -1,6 +1,7 @@
 /* Monta cada página con los componentes y su contenido. */
 (function () {
   var R = window.RumboNorte, C = window.RumboNorteContenido, P = window.RumboNortePaginas;
+  var ROOT = (window.RumboNorteIdioma || {}).raiz || '';
   var h = React.createElement;
 
   function header(path) {
@@ -76,8 +77,16 @@
     }
   };
 
-  window.RumboNorteApp = function (name) { return BUILD[name](); };
+  window.RumboNorteApp = function (name) {
+    // El selector de idioma enlaza con esta misma página en los demás idiomas.
+    if (window.RumboNorteIdioma) window.RumboNorteIdioma.archivo = P[name].file;
+    return BUILD[name]();
+  };
   if (typeof document === 'undefined') return;
+
+  // Con JavaScript, la cabecera móvil pasa a la hamburguesa y las tarjetas a su versión que se abre.
+  // Sin él (o si falla este script), el CSS deja el menú y el texto de las tarjetas a la vista.
+  document.documentElement.classList.add('rn-js');
 
   var name = document.documentElement.getAttribute('data-page');
   if (!name) {
@@ -87,8 +96,8 @@
   }
 
   var root = document.getElementById('root');
-  if (root.firstChild) ReactDOM.hydrateRoot(root, BUILD[name]());
-  else ReactDOM.createRoot(root).render(BUILD[name]());
+  if (root.firstChild) ReactDOM.hydrateRoot(root, window.RumboNorteApp(name));
+  else ReactDOM.createRoot(root).render(window.RumboNorteApp(name));
 
   // Animaciones con GSAP, cuando la página ya ha cargado: el camino del inicio, solo en pantallas
   // anchas donde hay margen para él, el vuelo del hero, los pasos del proceso, las cifras que cuentan,
@@ -96,14 +105,14 @@
   // la barra de lectura de la guía, el recorrido de Metas, y la nómina de la guía.
   function later(file) {
     window.addEventListener('load', function () {
-      import(new URL(file, document.baseURI).href).then(function (m) { return m.mount(); })
+      import(new URL(ROOT + file, document.baseURI).href).then(function (m) { return m.mount(); })
         .catch(function (e) { console.warn('Animación no disponible', e); });
     });
   }
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (name === 'inicio' && window.matchMedia('(min-width: 1360px)').matches) later('js/camino.js');
   // El vuelo del hero no espera a que cargue toda la página: el avión está oculto hasta que despega.
-  if (name === 'inicio' && !calm) import(new URL('js/heroe.js', document.baseURI).href).then(function (m) { return m.mount(); })
+  if (name === 'inicio' && !calm) import(new URL(ROOT + 'js/heroe.js', document.baseURI).href).then(function (m) { return m.mount(); })
     .catch(function (e) { console.warn('Animación no disponible', e); });
   if (name === 'inicio' && !calm) later('js/proceso.js');
   if ((name === 'inicio' || name === 'metas') && !calm) later('js/cifras.js');
