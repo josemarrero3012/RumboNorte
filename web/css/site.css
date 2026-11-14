@@ -64,3 +64,23 @@ html:not(.rn-js) .rn-card:hover .rn-card-art { transform: none; opacity: 1; }
   html:not(.rn-js) .rn-header-nav .rn-btn { display: none; }
   .rn-header-langs { padding-left: 0; border-left: 0; }
 }
+
+/* «Pausar animaciones»: botón discreto bajo los botones del hero. Sin JavaScript no hace falta (nada se
+   mueve en bucle) y con movimiento reducido tampoco. */
+.rn-motion { display: inline-flex; align-items: center; gap: 8px; margin-top: var(--space-4); min-height: 32px; padding: 4px 10px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--on-navy-muted); font: inherit; font-size: 14px; line-height: 20px; cursor: pointer; }
+.rn-motion svg { width: 12px; height: 12px; fill: currentColor; }
+.rn-motion:hover { color: var(--on-navy); text-decoration: underline; text-underline-offset: 4px; }
+.rn-motion:focus-visible { outline: 3px solid var(--on-navy); outline-offset: 2px; }
+html:not(.rn-js) .rn-motion { display: none; }
+@media (prefers-reduced-motion: reduce) { .rn-motion { display: none; } }
+
+/* Con las animaciones pausadas se detiene todo lo que da vueltas o se desliza solo. */
+.rn-quieto .rn-sticker-ring, .rn-quieto .rn-hero-map-origin-ring, .rn-quieto .rn-logostrip-track, .rn-quieto .rn-bru-face .rn-bru-needle { animation-play-state: paused; }
+.rn-quieto .rn-hero-map-origin-ring { opacity: 0; }
+.rn-quieto .rn-jobs.is-auto .rn-job-time { visibility: hidden; }
+/* El carrusel de logos también se para mientras se recorre con el teclado. */
+.rn-logostrip:focus-within .rn-logostrip-track { animation-play-state: paused; }
+
+/* Aviso de requisito no cumplido en el formulario: visible pero sin parecer un error de escritura. */
+.rn-form-warn:empty { display: none; }
+.rn-form-warn p { margin: 0; padding: var(--space-4); border-left: 4px solid var(--orange); border-radius: var(--radius-sm); background: var(--surface); color: var(--charcoal); font-size: 16px; line-height: 24px; }

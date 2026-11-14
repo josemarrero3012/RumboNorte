@@ -24,6 +24,8 @@ window.RumboNorteTextos = {
   verPaises: 'Zobacz wszystkie trzy kraje',
   trabajarEn: 'Praca w',
   paisEn: { Holandia: 'Holandii', Belgia: 'Belgii', Niemcy: 'Niemczech' },
+  pausar: 'Wstrzymaj animacje',
+  reanudar: 'Wznów animacje',
   imagenIlustrativa: 'Zdjęcie poglądowe',
   indice: 'Spis treści',
   fotoIvan: 'Iván Guerra Arroyo, rekruter Rumbo Norte',
@@ -66,6 +68,10 @@ window.RumboNorteTextos = {
       consentimiento_rgpd: 'Bez zaznaczenia tego pola nie mogę ocenić twojego zgłoszenia.'
     },
     tardanza: 'Wysyłanie trwa dłużej niż zwykle i nie wiem, czy zgłoszenie dotarło. Zanim wyślesz je ponownie, [napisz do mnie na WhatsAppie](wa:), a sprawdzimy to.',
+    // Aviso si las respuestas no cumplen un requisito; se puede enviar igual.
+    noEncaja: 'Przy tych odpowiedziach nie jest spełnione wymaganie obowiązkowe: **{lista}**. W tej chwili Iván nie mógłby przedstawić cię do swoich ofert. Możesz mimo to wysłać zgłoszenie, jeśli twoja sytuacja wkrótce się zmieni, albo [zapytać go na WhatsAppie](wa:).',
+    requisitos: ['ukończone 21 lat', 'obywatelstwo lub paszport UE', 'angielski B1 komunikatywny'],
+    y: ' i ',
     progreso: 'Ukończone sekcje obowiązkowe: {n} z {total}',
     listo: 'Wszystko gotowe: możesz wysłać zgłoszenie.'
   },
