@@ -245,7 +245,7 @@ const spring = (s, target, dt, k = 90, d = 15) => {
 };
 const S = (x = 0) => ({ x, v: 0 });
 
-export async function mount({ host, ids, anchors, onActive, onSelect, onReady }) {
+export async function mount({ host, ids, anchors, onActive, onSelect, onReady, onLost }) {
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0, 0);
@@ -262,11 +262,19 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
   const world = new THREE.Group();
   scene.add(world);
 
-  const [outlines, gltfs, maps] = await Promise.all([
-    fetch(BASE + 'siluetas.json').then((r) => r.json()),
-    Promise.all(ids.map((id) => new GLTFLoader().loadAsync(`${BASE}${id}.glb`))),
-    Promise.all(ids.map((id) => new THREE.TextureLoader().loadAsync(`${BASE}luz-${id}.webp`))),
-  ]);
+  // Si falla la descarga de algo, se deshace lo creado y el póster sigue en su sitio.
+  let outlines, gltfs, maps;
+  try {
+    [outlines, gltfs, maps] = await Promise.all([
+      fetch(BASE + 'siluetas.json').then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }),
+      Promise.all(ids.map((id) => new GLTFLoader().loadAsync(`${BASE}${id}.glb`))),
+      Promise.all(ids.map((id) => new THREE.TextureLoader().loadAsync(`${BASE}luz-${id}.webp`))),
+    ]);
+  } catch (err) {
+    renderer.dispose();
+    renderer.domElement.remove();
+    throw err;
+  }
 
   // Sin alphaToCoverage: con él, el borde del trazo salía moteado; el antialiasing del lienzo basta.
   const ink = new LineMaterial({ color: INK, linewidth: 1.5 });
@@ -404,8 +412,20 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
   io.observe(host);
   document.addEventListener('visibilitychange', start);
 
+  // Si el navegador pierde el contexto gráfico (poca memoria, muchas pestañas), la escena se para y
+  // vuelve el póster; las fichas de los países siguen funcionando igual.
+  let lost = false;
+  el.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    lost = true;
+    running = false;
+    cancelAnimationFrame(raf);
+    el.style.visibility = 'hidden';
+    onLost && onLost();
+  });
+
   function start() {
-    if (running || !state.visible || document.hidden) return;
+    if (lost || running || !state.visible || document.hidden) return;
     running = true;
     last = performance.now();
     raf = requestAnimationFrame(frame);
@@ -530,6 +550,27 @@ export async function mount({ host, ids, anchors, onActive, onSelect, onReady })
       setActive(id);
     },
     back() { state.selected = null; setActive(null); },
-    destroy() { cancelAnimationFrame(raf); ro.disconnect(); io.disconnect(); renderer.dispose(); el.remove(); },
+    // Libera todo lo que se ha creado: Three no lo hace solo al quitar la escena.
+    destroy() {
+      cancelAnimationFrame(raf);
+      running = false;
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener('visibilitychange', start);
+      const seen = new Set();
+      scene.traverse((o) => {
+        if (o.geometry) o.geometry.dispose();
+        [].concat(o.material || []).forEach((m) => {
+          if (seen.has(m)) return;
+          seen.add(m);
+          Object.values(m).forEach((v) => { if (v && v.isTexture) v.dispose(); });
+          if (m.uniforms) Object.values(m.uniforms).forEach((u) => { if (u && u.value && u.value.isTexture) u.value.dispose(); });
+          m.dispose();
+        });
+      });
+      ink.dispose();
+      renderer.dispose();
+      el.remove();
+    },
   };
 }

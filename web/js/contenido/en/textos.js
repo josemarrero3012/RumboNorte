@@ -24,6 +24,8 @@ window.RumboNorteTextos = {
   verPaises: 'See all three countries',
   trabajarEn: 'Working in',
   paisEn: {},
+  pausar: 'Pause animations',
+  reanudar: 'Resume animations',
   imagenIlustrativa: 'Illustrative image',
   indice: 'Contents',
   fotoIvan: 'Iván Guerra Arroyo, recruiter at Rumbo Norte',
@@ -66,6 +68,10 @@ window.RumboNorteTextos = {
       consentimiento_rgpd: 'Without this box I can’t assess your application.'
     },
     tardanza: 'Sending is taking longer than usual and I can’t tell whether it arrived. Before you send it again, [message me on WhatsApp](wa:) and we’ll check.',
+    // Aviso si las respuestas no cumplen un requisito; se puede enviar igual.
+    noEncaja: 'With these answers a compulsory requirement isn’t met: **{lista}**. Right now Iván couldn’t put you forward for his vacancies. You can still send it if your situation is about to change, or [ask him on WhatsApp](wa:).',
+    requisitos: ['being 21 or older', 'EU nationality or passport', 'conversational B1 English'],
+    y: ' and ',
     progreso: '{n} of {total} required sections complete',
     listo: 'All set: you can send it now.'
   },

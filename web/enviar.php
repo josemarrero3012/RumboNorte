@@ -88,6 +88,13 @@ $d = [
   'consentimiento_rgpd' => linea('consentimiento_rgpd'),
 ];
 
+// Si encaja en los tres requisitos se calcula aquí, también cuando el formulario llega sin JavaScript.
+$no = [];
+if (preg_match('/^\d{2}$/', $d['edad']) && (int) $d['edad'] < 21) $no[] = 'menos de 21 años';
+if ($d['nacionalidad_ue'] === 'No') $no[] = 'sin nacionalidad ni pasaporte de la UE';
+if ($d['nivel_ingles'] === 'Menos de B1') $no[] = 'inglés por debajo de B1';
+$d['encaja'] = $no ? 'No: ' . implode(', ', $no) : 'Sí';
+
 // Las mismas reglas que comprueba el formulario antes de enviar.
 $fallos = [];
 if ($d['nombre'] === '') $fallos[] = 'nombre';
@@ -100,6 +107,7 @@ foreach (['nacionalidad_ue', 'nivel_ingles', 'carnet', 'sector', 'consentimiento
 if ($fallos) responder(422, $json, $idioma, implode(',', $fallos));
 
 $etiquetas = [
+  'encaja' => 'Cumple los requisitos',
   'nombre' => 'Nombre',
   'telefono' => 'WhatsApp',
   'email' => 'Correo',
@@ -122,7 +130,7 @@ foreach ($etiquetas as $k => $nombre) {
 }
 $cuerpo .= "\nExperiencia / mensaje:\n" . ($d['mensaje'] !== '' ? $d['mensaje'] : '—') . "\n";
 
-$asunto = 'Candidatura: ' . $d['nombre'] . ' (' . ($d['sector'] ?: 'sin sector') . ', ' . strtoupper($idioma) . ')';
+$asunto = ($no ? '[No cumple requisitos] ' : '') . 'Candidatura: ' . $d['nombre'] . ' (' . ($d['sector'] ?: 'sin sector') . ', ' . strtoupper($idioma) . ')';
 $cabeceras = [
   'From: ' . mb_encode_mimeheader(MARCA, 'UTF-8') . ' <' . REMITENTE . '>',
   'Reply-To: ' . $d['email'],
