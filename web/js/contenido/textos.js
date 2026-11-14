@@ -1,0 +1,95 @@
+/* Textos fijos de la interfaz (botones, avisos, etiquetas del formulario y del asistente) y datos del idioma.
+   Cada idioma tiene su copia en contenido/<idioma>/textos.js con las mismas claves. */
+window.RumboNorteIdioma = {
+  code: 'es',
+  // Desde las páginas de este idioma hasta la raíz de la web, donde están assets/, js/, lib/ y static/.
+  raiz: '',
+  ogLocale: 'es_ES'
+};
+
+window.RumboNorteTextos = {
+  whatsappMensaje: 'Hola Iván. He visto Rumbo Norte y me interesa trabajar en el norte de Europa.',
+  saltar: 'Saltar al contenido',
+  inicioMarca: 'Rumbo Norte, inicio',
+  navPrincipal: 'Principal',
+  navMenu: 'Menú',
+  abrirMenu: 'Abrir menú',
+  cerrarMenu: 'Cerrar menú',
+  idioma: 'Idioma',
+  o: 'o',
+  heroLead: 'Tu trabajo en',
+  heroRing: 'Rumbo Norte, trabajo en Europa',
+  abrir: 'Abrir',
+  cerrar: 'Cerrar',
+  leerMas: 'Leer más',
+  verFicha: 'Ver su ficha',
+  verPaises: 'Ver los tres países',
+  trabajarEn: 'Trabajar en',
+  // Cómo se dice el país detrás de «trabajarEn», si cambia (declinación, preposición).
+  paisEn: {},
+  imagenIlustrativa: 'Imagen ilustrativa',
+  indice: 'Índice',
+  fotoIvan: 'Iván Guerra Arroyo, reclutador de Rumbo Norte',
+  whatsappOrb: 'Escribir a Iván por WhatsApp',
+  form: {
+    parts: ['Datos de contacto', 'Requisitos', 'Destino e idiomas', 'Tu perfil', 'Consentimiento'],
+    nombre: 'Nombre y apellidos',
+    nombrePh: 'Como aparece en tu DNI',
+    whatsapp: 'WhatsApp',
+    prefijo: 'Prefijo',
+    telefonoPh: '600 000 000',
+    email: 'Correo electrónico',
+    emailPh: 'tucorreo@ejemplo.com',
+    edad: 'Edad',
+    edadPh: 'Ej. 27',
+    ingles: 'Nivel de inglés',
+    destino: '¿A qué país te gustaría ir?',
+    destinoHint: 'opcional, puedes marcar varios',
+    idiomas: 'Otros idiomas que hablas',
+    idiomasHint: 'opcional, los que puedas usar en el trabajo',
+    carnet: 'Carnet de conducir y certificados',
+    carnetHint: 'marca todos los que tengas',
+    sector: 'Sector que te interesa',
+    disponibilidad: '¿Desde cuándo podrías viajar?',
+    disponibilidadHint: 'opcional',
+    mensaje: 'Tu experiencia, en dos líneas',
+    mensajeHint: 'opcional',
+    mensajePh: 'Dónde has trabajado y en qué, si vas con alguien o lo que más te preocupa.',
+    enviando: 'Enviando…',
+    ninguno: '(ninguno marcado)',
+    errores: {
+      nombre: 'Escribe tu nombre y apellidos.',
+      telefono: 'Escribe un número de WhatsApp válido.',
+      email: 'Escribe un correo válido, como tucorreo@ejemplo.com.',
+      edad: 'Escribe tu edad en números.',
+      nacionalidad_ue: 'Elige una opción.',
+      nivel_ingles: 'Elige tu nivel de inglés.',
+      carnet: 'Marca al menos una opción.',
+      sector: 'Elige una opción.',
+      consentimiento_rgpd: 'Sin esta casilla no puedo valorar tu candidatura.'
+    },
+    // Si el servidor no contesta a tiempo puede que la candidatura sí haya llegado: no se dice que ha fallado.
+    tardanza: 'El envío está tardando más de lo normal y no sé si ha llegado. Antes de volver a enviarla, [escríbeme por WhatsApp](wa:) y lo comprobamos.',
+    progreso: '{n} de {total} bloques obligatorios completos',
+    listo: 'Todo listo: ya puedes enviarla.'
+  },
+  asistente: {
+    abrir: 'Abrir el asistente: pregúntame',
+    region: 'Asistente',
+    tituloCorto: 'Pregúntame',
+    nota: 'Respondo con lo que dice la web. Cifras orientativas.',
+    quiza: '¿Quizá buscabas esto?',
+    burbuja: '¿Dudas? Pregúntame',
+    titulo: 'Asistente de Rumbo Norte',
+    reiniciar: 'Empezar de nuevo',
+    cerrar: 'Cerrar el asistente',
+    placeholder: 'Escribe tu pregunta…',
+    etiqueta: 'Escribe tu pregunta',
+    enviar: 'Enviar pregunta',
+    requisitos: 'Ver los requisitos',
+    buscando: 'Buscando la respuesta…',
+    preguntarIvan: 'Preguntar a Iván',
+    preguntaIvan: 'Hola Iván. Tengo una pregunta: ',
+    abrirWhatsapp: 'Abrir WhatsApp'
+  }
+};

@@ -38,3 +38,29 @@ html { scroll-behavior: smooth; }
 .rn-jobs { --rn-slim: 76px; --rn-open: calc(min(1216px, 100cqi - 64px) - (var(--rn-n, 6) - 1) * (var(--rn-slim) + var(--rn-gap))); }
 /* Hero: con movimiento permitido el avión y la chincheta no se pintan quietos antes del vuelo; js/heroe.js los hace aparecer. */
 @media (prefers-reduced-motion: no-preference) { .rn-hero-map-plane, .rn-hero-map-pin { opacity: 0; } }
+
+/* Selector de idioma: en la cabecera de escritorio, dentro del menú móvil y en el pie. */
+.rn-langs { display: flex; align-items: center; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.rn-lang { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; padding: 0 4px; box-sizing: border-box; border-radius: var(--radius-sm); color: var(--on-navy); font-size: 15px; line-height: 20px; font-weight: 700; letter-spacing: .04em; text-decoration: none; }
+a.rn-lang:hover { text-decoration: underline; text-underline-offset: 5px; text-decoration-color: var(--orange); }
+a.rn-lang:focus-visible { outline: 3px solid var(--on-navy); outline-offset: 1px; }
+.rn-lang.is-current { color: var(--orange); }
+.rn-header-langs { padding-left: var(--space-4); border-left: 1px solid rgba(255, 255, 255, .25); }
+.rn-menu-langs { gap: var(--space-2); padding: var(--space-4) var(--space-2) var(--space-2); }
+.rn-menu-langs .rn-lang { min-width: 44px; min-height: 44px; font-size: 17px; }
+.rn-footer-langs { margin-top: var(--space-2); }
+
+/* Sin JavaScript (o hasta que arranca), nada depende de la hamburguesa ni de abrir una tarjeta:
+   el menú se ve como una fila de enlaces y las tarjetas enseñan su cifra y su texto. */
+html:not(.rn-js) .rn-card { min-height: 0; }
+html:not(.rn-js) .rn-card-toggle { display: none; }
+html:not(.rn-js) .rn-card-art { position: static; }
+html:not(.rn-js) .rn-card-more { position: static; padding: var(--space-6) var(--space-8) var(--space-8); opacity: 1; transform: none; }
+html:not(.rn-js) .rn-card:hover .rn-card-art { transform: none; opacity: 1; }
+@container (max-width: 760px) {
+  html:not(.rn-js) .rn-header { flex-wrap: wrap; }
+  html:not(.rn-js) .rn-header-burger { display: none; }
+  html:not(.rn-js) .rn-header-nav { display: flex; flex-wrap: wrap; order: 3; width: 100%; gap: var(--space-2) var(--space-4); margin: 0; }
+  html:not(.rn-js) .rn-header-nav .rn-btn { display: none; }
+  .rn-header-langs { padding-left: 0; border-left: 0; }
+}

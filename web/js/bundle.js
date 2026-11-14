@@ -7,11 +7,17 @@
     return Array.prototype.filter.call(arguments, Boolean).join(' ');
   }
 
+  // Textos fijos de la interfaz en el idioma de la página (contenido/textos.js y sus traducciones).
+  function T() { return window.RumboNorteTextos || {}; }
+  function F() { return T().form || {}; }
+  // Camino desde la página hasta la raíz de la web: '' en español, '../' en /en/, /pl/ y /pt/.
+  function raiz() { return (window.RumboNorteIdioma || {}).raiz || ''; }
+
   // «wa:» abre WhatsApp con el número de la configuración; lo que le siga es el mensaje ya escrito.
   function url(href) {
     if (!href || href.indexOf('wa:') !== 0) return href;
     var cfg = window.RumboNorteConfig || {};
-    var msg = href.slice(3) || cfg.mensaje || '';
+    var msg = href.slice(3) || T().whatsappMensaje || cfg.mensaje || '';
     return 'https://wa.me/' + (cfg.whatsapp || '') + (msg ? '?text=' + encodeURIComponent(msg) : '');
   }
 
@@ -107,25 +113,58 @@
         props.src ? h('image', { href: props.src, x: 46, y: 46, width: 108, height: 108, preserveAspectRatio: 'xMidYMid meet' }) : null));
   }
 
+  // Enlaces a la misma página en los otros idiomas (lista en config.js); la actual va marcada y no es un enlace.
+  function Languages(props) {
+    var I = window.RumboNorteIdioma || {};
+    var file = I.archivo || 'index.html';
+    // La 404 es la misma para cualquier dirección: lleva a la portada de cada idioma.
+    if (file === 'index.html' || file === '404.html') file = '';
+    var list = ((window.RumboNorteConfig || {}).idiomas || []).map(function (v) {
+      return { code: v.code, name: v.name, href: (raiz() + (v.code === 'es' ? '' : v.code + '/') + file) || './' };
+    });
+    if (list.length < 2) return null;
+    return h('ul', { className: cx('rn-langs', props.className), 'aria-label': T().idioma },
+      list.map(function (v) {
+        return h('li', { key: v.code },
+          v.code === I.code
+            ? h('span', { className: 'rn-lang is-current', lang: v.code, 'aria-current': 'true', title: v.name }, v.code.toUpperCase())
+            : h('a', { className: 'rn-lang', href: v.href, lang: v.code, hrefLang: v.code, title: v.name, onClick: props.onPick }, v.code.toUpperCase()));
+      }));
+  }
+
   function Header(props) {
     var links = props.links || [];
     var state = React.useState(false);
     var open = state[0], setOpen = state[1];
+    var burger = React.useRef(null);
     function close() { setOpen(false); }
+    // El menú móvil se cierra con Escape y devuelve el foco al botón que lo abrió.
+    React.useEffect(function () {
+      if (!open) return undefined;
+      function key(e) {
+        if (e.key !== 'Escape') return;
+        setOpen(false);
+        if (burger.current) burger.current.focus();
+      }
+      document.addEventListener('keydown', key);
+      return function () { document.removeEventListener('keydown', key); };
+    }, [open]);
     return h('header', { className: 'rn-header rn-on-navy' },
-      h('a', { className: 'rn-skip', href: '#contenido' }, 'Saltar al contenido'),
-      h('a', { className: 'rn-header-logo', href: props.homeHref || '#', 'aria-label': 'Rumbo Norte, inicio' },
+      h('a', { className: 'rn-skip', href: '#contenido' }, T().saltar),
+      h('a', { className: 'rn-header-logo', href: props.homeHref || '#', 'aria-label': T().inicioMarca },
         props.markSrc ? h('img', { className: 'rn-header-mark', src: props.markSrc, alt: '', width: 36, height: 39 }) : null,
         h('img', { className: 'rn-header-wordmark', src: props.logoSrc, alt: '', width: 216, height: 27 })),
-      h('nav', { className: 'rn-header-nav', 'aria-label': 'Principal' },
+      h('nav', { className: 'rn-header-nav', id: 'rn-nav', 'aria-label': T().navPrincipal },
         links.map(function (l) { return h('a', { key: l.href, className: 'rn-header-link', href: l.href, 'aria-current': l.href === props.current ? 'page' : null }, l.label); }),
+        h(Languages, { className: 'rn-header-langs' }),
         props.cta ? h(Button, { href: props.cta.href, size: 'sm', icon: props.cta.icon }, props.cta.label) : null),
       props.cta && props.cta.icon ? h('a', Object.assign({ className: 'rn-header-icon', 'aria-label': props.cta.label }, linkProps(props.cta.href)),
         h('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' }, h('path', { d: ICONS[props.cta.icon] }))) : null,
-      h('button', { className: 'rn-header-burger', type: 'button', 'aria-expanded': open, 'aria-label': open ? 'Cerrar menú' : 'Abrir menú', onClick: function () { setOpen(!open); } },
+      h('button', { ref: burger, className: 'rn-header-burger', type: 'button', 'aria-expanded': open, 'aria-controls': 'rn-menu', 'aria-label': open ? T().cerrarMenu : T().abrirMenu, onClick: function () { setOpen(!open); } },
         h('span', null), h('span', null)),
-      open ? h('nav', { className: 'rn-header-menu', 'aria-label': 'Menú' },
+      open ? h('nav', { className: 'rn-header-menu', id: 'rn-menu', 'aria-label': T().navMenu },
         links.map(function (l) { return h('a', { key: l.href, href: l.href, onClick: close }, l.label); }),
+        h(Languages, { className: 'rn-menu-langs', onPick: close }),
         props.cta ? h(Button, { href: props.cta.href, icon: props.cta.icon, onClick: close }, props.cta.label) : null) : null);
   }
 
@@ -142,7 +181,7 @@
 
   function listToSentence(items) {
     if (items.length < 2) return items.join('');
-    return items.slice(0, -1).join(', ') + ' o ' + items[items.length - 1];
+    return items.slice(0, -1).join(', ') + ' ' + T().o + ' ' + items[items.length - 1];
   }
 
   // La franja naranja de la curva se dibuja de izquierda a derecha al cargar (rn-hero-curve-wipe, en CSS).
@@ -216,7 +255,7 @@
 
   function Hero(props) {
     var countries = props.countries || ['Países Bajos', 'Alemania', 'Bélgica'];
-    var lead = props.lead || 'Tu trabajo en';
+    var lead = props.lead || T().heroLead;
     var leadWords = lead.split(' ');
     var leadEnd = leadWords.pop();
     var state = React.useState(0);
@@ -258,7 +297,7 @@
               h('span', { className: 'rn-hero-lead-end-next' }, leadEnd + ' '),
               h('span', { key: index, className: 'rn-hero-country' }, countries[index]))),
           props.also ? h('p', { className: 'rn-hero-also' }, props.also) : null,
-          props.photoSrc ? h(Sticker, { className: 'rn-hero-sticker-a', text: props.ring || 'Rumbo Norte, trabajo en Europa', photoSrc: props.photoSrc }) : null,
+          props.photoSrc ? h(Sticker, { className: 'rn-hero-sticker-a', text: props.ring || T().heroRing, photoSrc: props.photoSrc }) : null,
           props.person ? h('p', { className: 'rn-hero-person' },
             h('strong', null, props.person.name), h('span', null, props.person.role)) : null,
           props.subtitle ? h('p', { className: 'rn-hero-sub' }, props.subtitle) : null,
@@ -285,7 +324,7 @@
       h('div', { className: 'rn-card-head' },
         h('p', { className: 'rn-card-eyebrow' }, it.eyebrow),
         h('h3', { className: 'rn-card-title' }, it.title)),
-      h('button', { className: 'rn-card-toggle', type: 'button', 'aria-expanded': open, 'aria-label': (open ? 'Cerrar ' : 'Abrir ') + it.eyebrow, onClick: function () { setOpen(!open); } }),
+      h('button', { className: 'rn-card-toggle', type: 'button', 'aria-expanded': open, 'aria-label': (open ? T().cerrar : T().abrir) + ' ' + it.eyebrow, onClick: function () { setOpen(!open); } }),
       h('div', { className: 'rn-card-stage' },
         h('div', { className: 'rn-card-art' }, h('img', { src: it.src, alt: '', width: it.width, height: it.height, loading: 'lazy' })),
         h('div', { className: 'rn-card-more' },
@@ -294,7 +333,7 @@
           it.figureNote ? h(FigureNote, { text: it.figureNote }) : null,
           h('p', { className: 'rn-card-text' }, it.text),
           h('a', { className: 'rn-card-link', href: it.href || '#', 'aria-label': it.linkHint || null },
-            h('span', { className: 'rn-card-link-text' }, it.linkLabel || 'Leer más'),
+            h('span', { className: 'rn-card-link-text' }, it.linkLabel || T().leerMas),
             h('svg', { viewBox: '0 0 16 16', 'aria-hidden': 'true' }, h('path', { d: 'M5 2l6 6-6 6' }))))));
   }
 
@@ -382,7 +421,7 @@
       var io = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) return;
         io.disconnect();
-        import(new URL(props.sceneUrl, document.baseURI).href).then(function (m) {
+        import(new URL(raiz() + props.sceneUrl, document.baseURI).href).then(function (m) {
           return m.mount({
             host: host.current,
             ids: items.map(function (c) { return c.id; }),
@@ -434,6 +473,8 @@
             return h('a', {
               key: c.id,
               href: '#' + c.id,
+              tabIndex: selected ? -1 : null,
+              'aria-hidden': selected ? 'true' : null,
               className: cx('rn-place', active === c.id && 'is-on'),
               ref: function (el) { if (el) labels.current[c.id] = el; },
               style: spot(c),
@@ -445,20 +486,20 @@
             },
               c.tag ? h('span', { className: cx('rn-place-tag', c.main && 'is-main') }, c.tag) : null,
               h('span', { className: 'rn-place-name' }, c.name),
-              h('span', { className: 'rn-place-mode' }, props.placeLabel || 'Ver su ficha'));
+              h('span', { className: 'rn-place-mode' }, props.placeLabel || T().verFicha));
           })),
         h('div', { className: 'rn-countries-panel', ref: panel },
           items.map(function (c) {
             return h('article', { key: c.id, id: c.id, className: 'rn-country', hidden: selected !== c.id, tabIndex: -1 },
               c.tag ? h('p', { className: cx('rn-place-tag', c.main && 'is-main') }, c.tag) : null,
-              h('h3', { className: 'rn-country-title' }, 'Trabajar en ' + c.name),
+              h('h3', { className: 'rn-country-title' }, T().trabajarEn + ' ' + ((T().paisEn || {})[c.name] || c.name)),
               h('p', { className: 'rn-country-text' }, rich(c.intro)),
               h('dl', { className: 'rn-country-facts' }, (c.facts || []).map(function (f) {
                 return h('div', { key: f.label }, h('dt', null, f.label), h('dd', null, rich(f.value)));
               })),
               h('div', { className: 'rn-actions' },
                 c.action ? h(Button, { href: c.action.href, variant: 'solid' }, c.action.label) : null,
-                h(Button, { type: 'button', variant: 'line', onClick: back }, props.backLabel || 'Ver los tres países')));
+                h(Button, { type: 'button', variant: 'line', onClick: back }, props.backLabel || T().verPaises)));
           }))));
   }
 
@@ -489,9 +530,13 @@
 
   // Nómina que se va restando: una barra con el bruto y cada descuento a su derecha, del último al primero.
   // Sin animación se ve el resultado final; js/nomina.js la recorre paso a paso con el scroll.
+  // Vale para «−15,00 €» y para «−€15.00»: los dos últimos dígitos tras un punto o una coma son los céntimos.
   function amount(text) {
-    var m = /(−|-)?\s*([\d.]+,\d{2})/.exec(text);
-    return m ? parseFloat(m[2].replace(/\./g, '').replace(',', '.')) * (m[1] ? -1 : 1) : 0;
+    var m = /(−|-)?\s*€?\s*(\d[\d.,\s]*\d)/.exec(text);
+    if (!m) return 0;
+    var s = m[2].replace(/\s/g, ''), cents = /[.,](\d{2})$/.exec(s);
+    var whole = (cents ? s.slice(0, -3) : s).replace(/[.,]/g, '');
+    return parseFloat(whole + (cents ? '.' + cents[1] : '')) * (m[1] ? -1 : 1);
   }
 
   function parts(text) {
@@ -608,7 +653,7 @@
         sizes: '(max-width: 1040px) min(84vw, 460px), 760px', alt: '', width: 1536, height: 1024,
         loading: 'lazy', decoding: 'async', style: { objectPosition: f[0] + '% ' + f[1] + '%' }
       }),
-      h('span', { className: 'rn-job-note' }, 'Imagen ilustrativa'));
+      h('span', { className: 'rn-job-note' }, T().imagenIlustrativa));
   }
 
   function Profiles(props) {
@@ -751,16 +796,22 @@
       props.error ? h('p', { className: 'rn-field-error', id: props.id + '-error' }, props.error) : null);
   }
 
+  // Las opciones pueden ser un texto o { value, label, note }: value es lo que llega en el correo
+  // (siempre en español, para que Iván lo lea igual venga del idioma que venga) y label lo que se ve.
+  function optValue(o) { return typeof o === 'string' ? o : o.value; }
+  function optLabel(o) { return typeof o === 'string' ? o : (o.label || o.value); }
+
   function Checks(props) {
-    return h('fieldset', { className: 'rn-checks rn-field-wide' },
-      h('legend', null, props.label, props.required ? h('span', { className: 'rn-req', 'aria-hidden': 'true' }, ' *') : null, h('span', { className: 'rn-field-hint' }, ' (' + props.hint + ')')),
+    var err = props.error ? 'f-' + props.name + '-error' : null;
+    return h('fieldset', { className: 'rn-checks rn-field-wide', 'aria-describedby': err, 'aria-invalid': props.error ? 'true' : null },
+      h('legend', null, props.label, props.required ? h('span', { className: 'rn-req', 'aria-hidden': 'true' }, ' *') : null, props.hint ? h('span', { className: 'rn-field-hint' }, ' (' + props.hint + ')') : null),
       h('div', null, props.options.map(function (o) {
-        var value = typeof o === 'string' ? o : o.value;
+        var value = optValue(o);
         return h('label', { key: value, className: 'rn-check' },
           h('input', { type: 'checkbox', name: props.name, value: value }),
-          h('span', null, value, o.note ? h('span', { className: 'rn-check-note' }, ' ' + o.note) : null));
+          h('span', null, optLabel(o), o.note ? h('span', { className: 'rn-check-note' }, ' ' + o.note) : null));
       })),
-      props.error ? h('p', { className: 'rn-field-error', id: 'f-' + props.name + '-error' }, props.error) : null);
+      props.error ? h('p', { className: 'rn-field-error', id: err }, props.error) : null);
   }
 
   function Part(props) {
@@ -769,32 +820,39 @@
       h('div', { className: 'rn-form-grid' }, props.children));
   }
 
+  // Tiempo máximo de espera del envío. Pasado ese tiempo no se sabe si llegó, y así se dice.
+  var SEND_TIMEOUT = 20000;
+
   function Application(props) {
     var form = props.form || {};
+    var L = F();
+    var parts = L.parts || [];
     var nState = React.useState(false), live = nState[0], setLive = nState[1];
     var eState = React.useState({}), errors = eState[0], setErrors = eState[1];
     var sState = React.useState(false), sending = sState[0], setSending = sState[1];
     var fState = React.useState(''), failure = fState[0], setFailure = fState[1];
     var ref = React.useRef(null);
+    var action = raiz() + (form.endpoint || 'enviar.php');
 
     React.useEffect(function () { setLive(true); }, []);
 
     function check(fd) {
-      var e = {};
-      if (!String(fd.get('nombre')).trim()) e.nombre = 'Escribe tu nombre y apellidos.';
-      if (!/^[\d\s()+-]{6,}$/.test(String(fd.get('telefono')).trim())) e.telefono = 'Escribe un número de WhatsApp válido.';
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(fd.get('email')).trim())) e.email = 'Escribe un correo válido, como tucorreo@ejemplo.com.';
-      if (!/^\d{2}$/.test(String(fd.get('edad')).trim())) e.edad = 'Escribe tu edad en números.';
-      if (!fd.get('nacionalidad_ue')) e.nacionalidad_ue = 'Elige una opción.';
-      if (!fd.get('nivel_ingles')) e.nivel_ingles = 'Elige tu nivel de inglés.';
-      if (!fd.getAll('carnet').length) e.carnet = 'Marca al menos una opción.';
-      if (!fd.get('sector')) e.sector = 'Elige una opción.';
-      if (!fd.get('consentimiento_rgpd')) e.consentimiento_rgpd = 'Sin esta casilla no puedo valorar tu candidatura.';
+      var e = {}, m = L.errores || {};
+      if (!String(fd.get('nombre')).trim()) e.nombre = m.nombre;
+      if (!/^[\d\s()+-]{6,}$/.test(String(fd.get('telefono')).trim())) e.telefono = m.telefono;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(fd.get('email')).trim())) e.email = m.email;
+      if (!/^\d{2}$/.test(String(fd.get('edad')).trim())) e.edad = m.edad;
+      if (!fd.get('nacionalidad_ue')) e.nacionalidad_ue = m.nacionalidad_ue;
+      if (!fd.get('nivel_ingles')) e.nivel_ingles = m.nivel_ingles;
+      if (!fd.getAll('carnet').length) e.carnet = m.carnet;
+      if (!fd.get('sector')) e.sector = m.sector;
+      if (!fd.get('consentimiento_rgpd')) e.consentimiento_rgpd = m.consentimiento_rgpd;
       return e;
     }
 
     function submit(ev) {
       ev.preventDefault();
+      if (sending) return;
       var fd = new FormData(ref.current);
       if (fd.get('bot-field')) return;
       var e = check(fd);
@@ -806,23 +864,29 @@
         (el && el.length && !el.tagName ? el[0] : el).focus();
         return;
       }
-      // Netlify guarda un valor por campo: lo marcado va junto, separado por comas.
+      // Lo marcado en cada grupo va junto, separado por comas, para que el correo sea fácil de leer.
       ['destino', 'idiomas', 'carnet'].forEach(function (name) {
         var all = fd.getAll(name);
         fd.delete(name);
         fd.append(name, all.length ? all.join(', ') : '(ninguno marcado)');
       });
       setSending(true);
-      fetch('./', {
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var late = false;
+      var timer = setTimeout(function () { late = true; if (ctrl) ctrl.abort(); }, SEND_TIMEOUT);
+      fetch(action, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(fd).toString()
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+        body: new URLSearchParams(fd).toString(),
+        signal: ctrl ? ctrl.signal : undefined
       }).then(function (r) {
+        clearTimeout(timer);
         if (!r.ok) throw new Error(r.status);
         window.location.href = form.action;
       }).catch(function () {
+        clearTimeout(timer);
         setSending(false);
-        setFailure(form.failure);
+        setFailure(late ? (L.tardanza || form.failure) : form.failure);
       });
     }
 
@@ -848,7 +912,7 @@
 
     function select(name, options) {
       return h('select', input(name, { defaultValue: '', required: true }), options.map(function (o, i) {
-        return h('option', { key: o, value: i ? o : '' }, o);
+        return h('option', { key: optValue(o), value: i ? optValue(o) : '' }, optLabel(o));
       }));
     }
 
@@ -860,47 +924,48 @@
         props.whatsapp ? h('div', { className: 'rn-apply-wa' },
           h(Button, { href: 'wa:', variant: 'solid', icon: 'whatsapp' }, props.whatsapp.label),
           h('p', { className: 'rn-fine' }, props.whatsapp.note)) : null),
-      h('form', { ref: ref, className: 'rn-form', name: form.name, method: 'POST', action: form.action, noValidate: live, onSubmit: live ? submit : null, onChange: live ? recheck : null },
+      h('form', { ref: ref, className: 'rn-form', name: form.name, method: 'POST', action: action, noValidate: live, onSubmit: live ? submit : null, onChange: live ? recheck : null },
         h('input', { type: 'hidden', name: 'form-name', value: form.name }),
         h('input', { type: 'hidden', name: 'subject', value: form.subject }),
+        h('input', { type: 'hidden', name: 'idioma', value: (window.RumboNorteIdioma || {}).code || 'es' }),
         h('p', { className: 'rn-form-trap', 'aria-hidden': 'true' },
           h('label', null, form.trap, h('input', { type: 'text', name: 'bot-field', tabIndex: -1, autoComplete: 'off' }))),
         h('div', { className: 'rn-form-head' },
           h('p', { className: 'rn-form-title' }, form.heading),
           h('p', { className: 'rn-fine' }, form.required)),
-        h(Part, { step: '01', title: 'Datos de contacto' },
-          h(Field, { id: 'f-nombre', label: 'Nombre y apellidos', required: true, wide: true, error: errors.nombre },
-            h('input', input('nombre', { type: 'text', required: true, autoComplete: 'name', placeholder: 'Como aparece en tu DNI' }))),
-          h(Field, { id: 'f-telefono', label: 'WhatsApp', required: true, error: errors.telefono },
+        h(Part, { step: '01', title: parts[0] },
+          h(Field, { id: 'f-nombre', label: L.nombre, required: true, wide: true, error: errors.nombre },
+            h('input', input('nombre', { type: 'text', required: true, autoComplete: 'name', placeholder: L.nombrePh }))),
+          h(Field, { id: 'f-telefono', label: L.whatsapp, required: true, error: errors.telefono },
             h('div', { className: 'rn-phone' },
-              h('select', { name: 'prefijo', className: 'rn-input', 'aria-label': 'Prefijo', defaultValue: form.prefijos[0], required: true },
+              h('select', { name: 'prefijo', className: 'rn-input', 'aria-label': L.prefijo, defaultValue: form.prefijos[0], required: true },
                 form.prefijos.map(function (o) { return h('option', { key: o, value: o }, o); })),
-              h('input', input('telefono', { type: 'tel', required: true, autoComplete: 'tel-national', inputMode: 'tel', placeholder: '600 000 000' })))),
-          h(Field, { id: 'f-email', label: 'Correo electrónico', required: true, error: errors.email },
-            h('input', input('email', { type: 'email', required: true, autoComplete: 'email', inputMode: 'email', placeholder: 'tucorreo@ejemplo.com' })))),
-        h(Part, { step: '02', title: 'Requisitos' },
-          h(Field, { id: 'f-edad', label: 'Edad', required: true, error: errors.edad },
-            h('input', input('edad', { type: 'text', required: true, inputMode: 'numeric', maxLength: 2, placeholder: 'Ej. 27', 'aria-describedby': errors.edad ? 'f-edad-error' : 'f-edad-hint' })),
+              h('input', input('telefono', { type: 'tel', required: true, autoComplete: 'tel-national', inputMode: 'tel', placeholder: L.telefonoPh })))),
+          h(Field, { id: 'f-email', label: L.email, required: true, error: errors.email },
+            h('input', input('email', { type: 'email', required: true, autoComplete: 'email', inputMode: 'email', placeholder: L.emailPh })))),
+        h(Part, { step: '02', title: parts[1] },
+          h(Field, { id: 'f-edad', label: L.edad, required: true, error: errors.edad },
+            h('input', input('edad', { type: 'text', required: true, inputMode: 'numeric', maxLength: 2, pattern: '[0-9]{2}', placeholder: L.edadPh, 'aria-describedby': errors.edad ? 'f-edad-error' : 'f-edad-hint' })),
             h('p', { className: 'rn-field-help', id: 'f-edad-hint' }, form.edadHint)),
           h(Field, { id: 'f-nacionalidad_ue', label: form.nacionalidad.label, required: true, error: errors.nacionalidad_ue }, select('nacionalidad_ue', form.nacionalidad.options)),
-          h(Field, { id: 'f-nivel_ingles', label: 'Nivel de inglés', required: true, wide: true, error: errors.nivel_ingles }, select('nivel_ingles', form.ingles))),
-        h(Part, { step: '03', title: 'Destino e idiomas' },
-          h(Checks, { name: 'destino', label: '¿A qué país te gustaría ir?', hint: 'puedes marcar varios', options: form.destinos }),
-          h(Checks, { name: 'idiomas', label: 'Otros idiomas que hablas', hint: 'los que puedas usar en el trabajo', options: form.idiomas })),
-        h(Part, { step: '04', title: 'Tu perfil' },
-          h(Checks, { name: 'carnet', label: 'Carnet de conducir y certificados', hint: 'marca todos los que tengas', options: form.carnet, required: true, error: errors.carnet }),
-          h(Field, { id: 'f-sector', label: 'Sector que te interesa', required: true, error: errors.sector }, select('sector', form.sector)),
-          h(Field, { id: 'f-disponibilidad', label: '¿Desde cuándo podrías viajar?' }, h('input', input('disponibilidad', { type: 'date' }))),
-          h(Field, { id: 'f-mensaje', label: 'Tu experiencia, en dos líneas', hint: 'opcional', wide: true },
-            h('textarea', input('mensaje', { rows: 3, placeholder: 'Dónde has trabajado y en qué, si vas con alguien o lo que más te preocupa.' })))),
-        h(Part, { step: '05', title: 'Consentimiento' },
+          h(Field, { id: 'f-nivel_ingles', label: L.ingles, required: true, wide: true, error: errors.nivel_ingles }, select('nivel_ingles', form.ingles))),
+        h(Part, { step: '03', title: parts[2] },
+          h(Checks, { name: 'destino', label: L.destino, hint: L.destinoHint, options: form.destinos }),
+          h(Checks, { name: 'idiomas', label: L.idiomas, hint: L.idiomasHint, options: form.idiomas })),
+        h(Part, { step: '04', title: parts[3] },
+          h(Checks, { name: 'carnet', label: L.carnet, hint: L.carnetHint, options: form.carnet, required: true, error: errors.carnet }),
+          h(Field, { id: 'f-sector', label: L.sector, required: true, error: errors.sector }, select('sector', form.sector)),
+          h(Field, { id: 'f-disponibilidad', label: L.disponibilidad, hint: L.disponibilidadHint }, h('input', input('disponibilidad', { type: 'date' }))),
+          h(Field, { id: 'f-mensaje', label: L.mensaje, hint: L.mensajeHint, wide: true },
+            h('textarea', input('mensaje', { rows: 3, placeholder: L.mensajePh })))),
+        h(Part, { step: '05', title: parts[4] },
           h('div', { className: 'rn-consent rn-field-wide' },
             h('label', null,
               h('input', input('consentimiento_rgpd', { type: 'checkbox', required: true, value: form.consentValue, className: null })),
               h('span', null, rich(form.consent), h('span', { className: 'rn-req', 'aria-hidden': 'true' }, ' *'))),
             errors.consentimiento_rgpd ? h('p', { className: 'rn-field-error', id: 'f-consentimiento_rgpd-error' }, errors.consentimiento_rgpd) : null)),
         h('div', { className: 'rn-form-end rn-field-wide' },
-          h(Button, { type: 'submit', disabled: sending }, sending ? 'Enviando…' : form.submit),
+          h(Button, { type: 'submit', disabled: sending }, sending ? L.enviando : form.submit),
           h('p', { className: 'rn-fine' }, form.foot),
           failure ? h('p', { className: 'rn-field-error', role: 'alert' }, rich(failure)) : null))));
   }
@@ -908,7 +973,7 @@
   function Footer(props) {
     return h('footer', { className: 'rn-footer rn-on-navy' }, h('div', { className: 'rn-footer-inner' },
       h('div', { className: 'rn-footer-brand' },
-        h('a', { className: 'rn-footer-logo', href: './', 'aria-label': 'Rumbo Norte, inicio' }, h('img', { src: props.logoSrc, alt: '', width: 216, height: 27, loading: 'lazy' })),
+        h('a', { className: 'rn-footer-logo', href: './', 'aria-label': T().inicioMarca }, h('img', { src: props.logoSrc, alt: '', width: 216, height: 27, loading: 'lazy' })),
         props.tagline ? h('p', { className: 'rn-footer-tagline' }, props.tagline) : null,
         h('p', { className: 'rn-footer-text' }, props.text, props.extra ? ' ' + props.extra : null)),
       (props.columns || []).map(function (c) {
@@ -920,6 +985,7 @@
       }),
       h('div', { className: 'rn-footer-end' },
         h('p', null, props.copy),
+        h(Languages, { className: 'rn-footer-langs' }),
         h('ul', { className: 'rn-footer-legal' }, (props.legal || []).map(function (l) {
           return h('li', { key: l.label }, h('a', { href: l.href }, l.label));
         })))));
@@ -928,7 +994,7 @@
   // Botón flotante de WhatsApp, abajo a la derecha en todas las páginas. Funciona sin JavaScript;
   // js/asistente.js pone encima el orbe del asistente y aparta los dos al llegar al final del pie.
   function WhatsAppOrb(props) {
-    return h('a', Object.assign({ className: 'rn-wa-orb', 'aria-label': (props && props.label) || 'Escribir a Iván por WhatsApp' }, linkProps('wa:')),
+    return h('a', Object.assign({ className: 'rn-wa-orb', 'aria-label': (props && props.label) || T().whatsappOrb }, linkProps('wa:')),
       h('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' }, h('path', { d: ICONS.whatsapp })));
   }
 
@@ -950,7 +1016,7 @@
 
   function Toc(props) {
     var state = React.useState(null), now = state[0], setNow = state[1];
-    var title = props.title || 'Índice';
+    var title = props.title || T().indice;
 
     React.useEffect(function () {
       if (!window.IntersectionObserver) return undefined;
@@ -1014,7 +1080,7 @@
   function Story(props) {
     return h('section', { className: 'rn-section' }, h('div', { className: 'rn-section-inner rn-story' },
       h('figure', { className: 'rn-story-card' },
-        h('img', { src: props.photoSrc, alt: 'Iván Guerra Arroyo, reclutador de Rumbo Norte', width: 640, height: 640 }),
+        h('img', { src: props.photoSrc, alt: T().fotoIvan, width: 640, height: 640 }),
         h('figcaption', null,
           h('p', { className: 'rn-minicard-eyebrow' }, props.tag),
           h('p', { className: 'rn-story-name' }, props.name),

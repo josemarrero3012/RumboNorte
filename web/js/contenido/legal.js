@@ -84,8 +84,7 @@ window.RumboNorteContenido.legal = {
       'Además, hay proveedores que tratan datos por nuestra cuenta como **encargados del tratamiento**, sin usarlos para fines propios:',
       {
         ul: [
-          '**Netlify, Inc.** (Estados Unidos): aloja la web y recibe los datos del formulario, que quedan guardados en su plataforma y nos llegan por correo. Netlify está adherida al Marco de Privacidad de Datos UE-EE. UU. (*EU-U.S. Data Privacy Framework*), que es la base de esta transferencia de datos fuera de la Unión Europea, y los trata según su acuerdo de encargo de tratamiento conforme al RGPD.',
-          '**Hostinger**: proveedor del buzón ivan@proyectoholanda.com, donde recibimos los avisos.'
+          '**Hostinger International Ltd.** (Chipre, Unión Europea): aloja la web y el buzón ivan@proyectoholanda.com. Los datos del formulario no se guardan en la web: el servidor los envía por correo a ese buzón, donde los recibimos. Hostinger los trata según su acuerdo de encargo de tratamiento conforme al RGPD.'
         ]
       },
       '**No vendemos tus datos, no los cedemos a anunciantes, no los usamos para publicidad y no los compartimos con ninguna otra empresa** distinta de las indicadas aquí.',
@@ -120,9 +119,10 @@ window.RumboNorteContenido.legal = {
       },
       { h2: '7. Cookies y datos de navegación', id: 'cookies' },
       '**Esta web no instala cookies propias de análisis, seguimiento ni publicidad.** No hay Google Analytics, no hay píxel de Facebook, no hay herramientas de mapas de calor. Por eso tampoco verás un banner de cookies pidiéndote permiso: no hay nada que permitir.',
-      'Hay dos cosas técnicas que conviene que sepas de todos modos:',
+      'Hay tres cosas técnicas que conviene que sepas de todos modos:',
       {
         ul: [
+          '**El asistente (la brújula).** Funciona entero en tu navegador, sin enviar tus preguntas a ningún servidor. Para que la conversación siga ahí al cambiar de página, la guarda en el almacenamiento de sesión de tu navegador, que se borra solo al cerrar la pestaña. El botón «Empezar de nuevo» la borra antes.',
           '**Tipografías.** Las fuentes de la web se sirven desde nuestro propio alojamiento, así que abrir la página no envía tu dirección IP a Google ni a ningún otro tercero.',
           '**Registros del servidor.** El alojamiento guarda registros técnicos habituales (dirección IP, fecha, navegador) por seguridad y para detectar incidencias. No los cruzamos con ningún dato personal ni los usamos para perfilarte.'
         ]

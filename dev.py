@@ -4,6 +4,7 @@ import http.server, os, sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 4321
+LANGS = ('en', 'pl', 'pt')
 RELOAD = b"""<script>(function(){var v;setInterval(function(){fetch('/__v').then(function(r){return r.text()}).then(function(t){if(v&&v!==t)location.reload();v=t}).catch(function(){})},800)})()</script></body>"""
 
 
@@ -30,10 +31,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         path = self.path.split('?')[0]
         if path == '/__v':
             return self.send_bytes(str(version()).encode(), 'text/plain')
-        if path == '/' or path.endswith('.html') or not os.path.exists(ROOT + path):
+        # /en/, /pl/ y /pt/: las páginas usan el contenido de su idioma; el resto de archivos
+        # (imágenes, scripts, estilos) son los mismos de la raíz.
+        lang = next((l for l in LANGS if path == f'/{l}' or path.startswith(f'/{l}/')), None)
+        rest = path[len(lang) + 1:] or '/' if lang else path
+        if lang and path == f'/{lang}':
+            self.send_response(301)
+            self.send_header('Location', f'/{lang}/')
+            return self.end_headers()
+        if rest == '/' or rest.endswith('.html') or not os.path.exists(ROOT + rest):
             # Todas las páginas comparten el mismo armazón: app.js elige cuál pintar según la dirección.
             with open(os.path.join(ROOT, 'index.html'), 'rb') as f:
-                return self.send_bytes(f.read().replace(b'</body>', RELOAD), 'text/html; charset=utf-8')
+                shell = f.read()
+            if lang:
+                shell = shell.replace(b'js/contenido/', f'js/contenido/{lang}/'.encode()).replace(b'lang="es"', f'lang="{lang}"'.encode())
+            return self.send_bytes(shell.replace(b'</body>', RELOAD), 'text/html; charset=utf-8')
+        if lang:
+            self.path = rest
         super().do_GET()
 
     def do_POST(self):

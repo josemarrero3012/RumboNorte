@@ -622,6 +622,8 @@ window.RumboNorteContenido.inicio = {
       'Neerlandés',
       'Francés',
       'Alemán',
+      'Polaco',
+      'Portugués',
       'Otro'
     ],
     carnet: [

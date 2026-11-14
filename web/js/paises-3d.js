@@ -5,7 +5,8 @@ import { LineSegments2 } from '../lib/three/LineSegments2.js';
 import { LineSegmentsGeometry } from '../lib/three/LineSegmentsGeometry.js';
 import { LineMaterial } from '../lib/three/LineMaterial.js';
 
-const BASE = 'assets/3d/';
+// Relativo a este archivo, así vale igual desde la raíz que desde /en/, /pl/ y /pt/.
+const BASE = new URL('../assets/3d/', import.meta.url).href;
 const WIDE = { belgica: [-3.3, -0.35, 0.1], 'paises-bajos': [0, 0.4, 0.3], alemania: [3.3, -0.25, 0.18] };
 const TALL = { 'paises-bajos': [-0.2, 4.85, 0.25], alemania: [0.1, 0, 0.1], belgica: [-0.1, -4.6, 0.18] };
 const GROUND = -1.05;
