@@ -24,6 +24,8 @@ window.RumboNorteTextos = {
   verPaises: 'Ver os três países',
   trabajarEn: 'Trabalhar',
   paisEn: { 'Países Baixos': 'nos Países Baixos', Bélgica: 'na Bélgica', Alemanha: 'na Alemanha' },
+  pausar: 'Pausar animações',
+  reanudar: 'Retomar animações',
   imagenIlustrativa: 'Imagem ilustrativa',
   indice: 'Índice',
   fotoIvan: 'Iván Guerra Arroyo, recrutador da Rumbo Norte',
@@ -66,6 +68,10 @@ window.RumboNorteTextos = {
       consentimiento_rgpd: 'Sem esta caixa não posso avaliar a tua candidatura.'
     },
     tardanza: 'O envio está a demorar mais do que o normal e não sei se chegou. Antes de a voltares a enviar, [escreve-me pelo WhatsApp](wa:) e confirmamos.',
+    // Aviso si las respuestas no cumplen un requisito; se puede enviar igual.
+    noEncaja: 'Com estas respostas não se cumpre um requisito obrigatório: **{lista}**. Neste momento o Iván não te poderia apresentar às vagas dele. Podes enviá-la na mesma se a tua situação estiver para mudar em breve, ou [perguntar-lhe pelo WhatsApp](wa:).',
+    requisitos: ['ter 21 anos ou mais', 'nacionalidade ou passaporte da UE', 'inglês B1 de conversação'],
+    y: ' e ',
     progreso: '{n} de {total} blocos obrigatórios completos',
     listo: 'Tudo pronto: já a podes enviar.'
   },
