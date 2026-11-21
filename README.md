@@ -91,6 +91,16 @@ python3 3d/exportar.py
 
 `exportar.py` necesita Pillow y deja los modelos y su luz en `web/assets/3d/`.
 
+## Sistema visual
+
+Las reglas que comparten todas las páginas, para que una sección nueva encaje sin inventar medidas. Los valores viven en `web/css/tokens.css` y los componentes en `web/css/bundle.css`.
+
+- **Color:** azul marino elevado (`--navy-raised`) para abrir cada página, blanco para leer y piedra (`--stone-soft`) para alternar secciones; el azul marino (`--navy`) cierra en el pie. Sobre blanco las tarjetas van en piedra y sobre piedra en blanco. Arena (`--sand-soft`) solo para avisos; salvia, arena y niebla solo para el país activo de Destinos. Naranja para acentos; el texto pequeño en naranja usa `--orange-deep` y el texto sobre naranja va en azul marino (`--on-orange`).
+- **Rejilla:** contenido de 1280 px como máximo con 32 px de margen (16 px en el móvil). Cabecera de sección en 7/5 (titular y texto lateral); columna fija más contenido en 5/7 (proceso, preguntas, perfiles, candidatura, historia); dos listas equivalentes en 1/1. Entre columnas, 64 px.
+- **Ritmo:** 96 px arriba y abajo en cada sección (64 px en el móvil); dos secciones blancas seguidas comparten el hueco. Ninguna sección termina con margen extra.
+- **Tipografía:** Anton en mayúsculas para titulares (portada 160, cabecera de página 88, sección 60, capítulo de la guía 52, subtítulo 26) y Figtree para el texto (entradilla 19, texto 17–18, letra pequeña 15–16). Los antetítulos van en 15 px, peso 800 y espaciado .08em.
+- **Componentes:** radio de 16 px en tarjetas, avisos y formulario; 6 px en campos y controles pequeños; botones en píldora. Sin sombras de elevación salvo en el asistente y los botones flotantes. Listas con raya naranja y enlaces subrayados en naranja.
+
 ## Publicación
 
 - **GitHub Pages:** cada cambio en `main` genera la demo y la publica con GitHub Actions ([`.github/workflows/pages.yml`](.github/workflows/pages.yml)).
