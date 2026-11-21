@@ -3,7 +3,8 @@
 // - la línea discontinua se descubre detrás de él (DrawSVGPlugin, sobre la máscara de la ruta),
 // - al aterrizar cae la chincheta y el borde del país destella,
 // - el nombre del país entra letra a letra (SplitText),
-// - y en bucle: tras una pausa la línea se borra y el avión vuelve a despegar.
+// - y en bucle: tras una pausa la línea se borra y el avión vuelve a despegar. El bucle espera
+//   mientras el hero no se ve, la pestaña está oculta o el visitante ha pausado las animaciones.
 // Sin este módulo el mapa se queda quieto (con movimiento reducido, con el avión a mitad de camino).
 import { loadGsap } from './gsap.js';
 
@@ -17,13 +18,29 @@ export async function mount() {
   const { gsap, SplitText } = await loadGsap('MotionPathPlugin', 'DrawSVGPlugin', 'SplitText');
 
   gsap.matchMedia().add('(prefers-reduced-motion: no-preference)', (ctx) => {
-    let flight = null, letters = null;
+    let flight = null, letters = null, waiting = false, inView = true;
     hero.setAttribute('data-fx', '');
+    const quiet = () => document.documentElement.classList.contains('rn-quieto');
+    const free = () => inView && !document.hidden && !quiet();
+    // Siguiente vuelta del bucle, o en espera hasta que vuelva a poder moverse.
+    // Al terminar la pausa en destino: la línea se borra desde España y el avión vuelve a salir. Si no
+    // puede moverse, se queda con la ruta dibujada hasta que pueda.
+    let reveal = null;
+    function again() {
+      if (!free()) { waiting = true; return; }
+      waiting = false;
+      ctx.add(() => gsap.to(reveal, { drawSVG: '100% 100%', duration: .8, ease: 'power1.in', onComplete: () => ctx.play({ again: true }) }));
+    }
+    function wake() { if (waiting && free()) again(); }
+    const seen = 'IntersectionObserver' in window ? new IntersectionObserver(([e]) => { inView = e.isIntersecting; wake(); }) : null;
+    if (seen) seen.observe(hero);
+    document.addEventListener('visibilitychange', wake);
+    window.addEventListener('rn-quieto', wake);
 
     // React ya ha pintado la ruta, la chincheta y el nombre del país nuevo: aquí solo se animan.
     ctx.add('play', (opts) => {
       const route = svg.querySelector('.rn-hero-map-route');
-      const reveal = svg.querySelector('.rn-hero-map-reveal');
+      reveal = svg.querySelector('.rn-hero-map-reveal');
       const plane = svg.querySelector('.rn-hero-map-plane');
       const pin = svg.querySelector('.rn-hero-map-pin');
       const place = svg.querySelector('.rn-hero-map-place.is-on');
@@ -44,10 +61,8 @@ export async function mount() {
         .fromTo(plane.firstElementChild, { scale: .55, transformOrigin: '50% 50%' }, { scale: 1.15, duration: FLIGHT / 2, ease: 'sine.out', yoyo: true, repeat: 1 }, 0)
         .to(plane, { opacity: 0, duration: .3 }, FLIGHT - .2);
       if (!opts.again) flight.to(pin, { opacity: 1, y: 0, scale: 1, duration: .8, ease: 'elastic.out(1, .45)' }, FLIGHT - .15);
-      // Bucle: la línea se borra desde España y vuelve a empezar. Un cambio de país mata este timeline.
-      flight
-        .to(reveal, { drawSVG: '100% 100%', duration: .8, ease: 'power1.in' }, FLIGHT + HOLD)
-        .call(() => ctx.play({ again: true }), null, FLIGHT + HOLD + .9);
+      // Bucle: tras la pausa en destino, la siguiente vuelta (ver again). Un cambio de país mata este timeline.
+      flight.call(again, null, FLIGHT + HOLD);
       if (place) flight.fromTo(place, { strokeWidth: 7 }, { strokeWidth: 2.6, duration: .7, ease: 'power2.out', clearProps: 'strokeWidth' }, FLIGHT - .1);
 
       const name = hero.querySelector('.rn-hero-country');
@@ -62,11 +77,15 @@ export async function mount() {
     });
 
     function next() { ctx.play({ letters: true }); }
-    // El primer vuelo sale en cuanto carga GSAP. El avión empieza oculto por CSS, así que no se ve quieto a mitad de camino.
+    // El primer vuelo sale en cuanto carga GSAP (también con las animaciones pausadas: es una sola
+    // entrada de dos segundos). El avión empieza oculto por CSS, así que no se ve quieto a mitad de camino.
     ctx.play({ delay: .1 });
     window.addEventListener('rn-hero-pais', next);
     return () => {
       window.removeEventListener('rn-hero-pais', next);
+      document.removeEventListener('visibilitychange', wake);
+      window.removeEventListener('rn-quieto', wake);
+      if (seen) seen.disconnect();
       if (letters) letters.revert();
       hero.removeAttribute('data-fx');
     };

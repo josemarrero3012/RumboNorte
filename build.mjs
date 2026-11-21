@@ -25,8 +25,9 @@ const VENDOR = ['lib/react.js', 'lib/react-dom.js', 'js/config.js', 'js/bundle.j
 const SHARED = ['textos', 'paginas', 'comun'];
 const CSS = ['css/fuentes.css', 'css/tokens.css', 'css/bundle.css', 'css/site.css', 'css/asistente.css'];
 const NOSCRIPT = '.rn-country[hidden]{display:block}.rn-country{animation:none}.rn-jobs{display:block;height:auto}.rn-job{margin-bottom:12px}.rn-job .rn-job-plate,.rn-job .rn-job-body{position:static;width:auto;margin:0;opacity:1}.rn-job-hit{display:none}';
-// Marca la página como «con JavaScript» antes de pintar, para que el menú móvil no dé un salto.
-const JS_FLAG = "document.documentElement.classList.add('rn-js')";
+// Marca la página como «con JavaScript» antes de pintar, para que el menú móvil no dé un salto, y
+// recupera si el visitante pausó las animaciones en otra visita (rn-quieto).
+const JS_FLAG = "var d=document.documentElement;d.classList.add('rn-js');try{if(localStorage.getItem('rn-quieto'))d.classList.add('rn-quieto')}catch(e){}";
 
 // Lee la configuración para saber los idiomas.
 const cfgBox = vm.createContext({});

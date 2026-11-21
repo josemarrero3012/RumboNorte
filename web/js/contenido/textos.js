@@ -27,6 +27,8 @@ window.RumboNorteTextos = {
   trabajarEn: 'Trabajar en',
   // Cómo se dice el país detrás de «trabajarEn», si cambia (declinación, preposición).
   paisEn: {},
+  pausar: 'Pausar animaciones',
+  reanudar: 'Reanudar animaciones',
   imagenIlustrativa: 'Imagen ilustrativa',
   indice: 'Índice',
   fotoIvan: 'Iván Guerra Arroyo, reclutador de Rumbo Norte',
@@ -70,6 +72,10 @@ window.RumboNorteTextos = {
     },
     // Si el servidor no contesta a tiempo puede que la candidatura sí haya llegado: no se dice que ha fallado.
     tardanza: 'El envío está tardando más de lo normal y no sé si ha llegado. Antes de volver a enviarla, [escríbeme por WhatsApp](wa:) y lo comprobamos.',
+    // Aviso si las respuestas no cumplen un requisito; se puede enviar igual.
+    noEncaja: 'Con estos datos no se cumple un requisito obligatorio: **{lista}**. Ahora mismo Iván no podría presentarte a sus vacantes. Puedes enviarla igual si tu situación va a cambiar pronto, o [preguntarle por WhatsApp](wa:).',
+    requisitos: ['tener 21 años o más', 'nacionalidad o pasaporte de la UE', 'inglés B1 conversacional'],
+    y: ' y ',
     progreso: '{n} de {total} bloques obligatorios completos',
     listo: 'Todo listo: ya puedes enviarla.'
   },

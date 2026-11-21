@@ -253,6 +253,27 @@
           h('path', { d: PLANE }))));
   }
 
+  // Pausa todo lo que se mueve solo (el vuelo del mapa, el sello, los logos, los perfiles). Se guarda
+  // para las siguientes visitas. Con movimiento reducido no aparece: ya no se mueve nada.
+  function quiet() { return document.documentElement.classList.contains('rn-quieto'); }
+
+  function MotionToggle() {
+    var state = React.useState(false), off = state[0], setOff = state[1];
+    React.useEffect(function () { setOff(quiet()); }, []);
+    function toggle() {
+      var next = !off;
+      document.documentElement.classList.toggle('rn-quieto', next);
+      try { if (next) localStorage.setItem('rn-quieto', '1'); else localStorage.removeItem('rn-quieto'); } catch (e) { /* sin almacenamiento */ }
+      setOff(next);
+      window.dispatchEvent(new CustomEvent('rn-quieto', { detail: { off: next } }));
+    }
+    return h('button', { type: 'button', className: 'rn-motion', 'aria-pressed': off, onClick: toggle },
+      h('svg', { viewBox: '0 0 16 16', 'aria-hidden': 'true' }, off
+        ? h('path', { d: 'M4 2.5v11l9-5.5z' })
+        : h('path', { d: 'M4 2.5h3v11H4zM9 2.5h3v11H9z' })),
+      off ? T().reanudar : T().pausar);
+  }
+
   function Hero(props) {
     var countries = props.countries || ['Países Bajos', 'Alemania', 'Bélgica'];
     var lead = props.lead || T().heroLead;
@@ -269,7 +290,7 @@
       var seen = 'IntersectionObserver' in window ? new IntersectionObserver(function (e) { visible.current = e[0].isIntersecting; }) : null;
       if (seen) seen.observe(section.current);
       var timer = setInterval(function () {
-        if (paused.current || !visible.current || document.hidden) return;
+        if (paused.current || !visible.current || document.hidden || quiet()) return;
         setIndex(function (i) { return (i + 1) % countries.length; });
       }, 3200);
       return function () { clearInterval(timer); if (seen) seen.disconnect(); };
@@ -304,7 +325,8 @@
           h('div', { className: 'rn-hero-cta' },
             props.primaryCta ? h(Button, { href: props.primaryCta.href }, props.primaryCta.label) : null,
             props.secondaryCta ? h(Button, { href: props.secondaryCta.href, variant: 'outline' }, props.secondaryCta.label) : null),
-          props.note ? h('p', { className: 'rn-hero-note' }, props.note) : null),
+          props.note ? h('p', { className: 'rn-hero-note' }, props.note) : null,
+          h(MotionToggle)),
         h(Curve)),
       props.promises ? h('ul', { className: 'rn-hero-promises' },
         props.promises.map(function (p) { return h('li', { key: p }, p); })) : null,
@@ -363,6 +385,21 @@
     return { '--wx': w[0] + '%', '--wy': w[1] + '%', '--tx': t[0] + '%', '--ty': t[1] + '%' };
   }
 
+  // Sin escena 3D, solo el póster: con movimiento reducido, con «ahorro de datos» o sin WebGL.
+  // El póster y las fichas dan la misma información; la escena es solo una mejora.
+  function lite() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+    var c = navigator.connection;
+    if (c && c.saveData) return true;
+    try {
+      var gl = window.WebGLRenderingContext && (document.createElement('canvas').getContext('webgl2') || document.createElement('canvas').getContext('webgl'));
+      // Se suelta el contexto de prueba en el acto: los navegadores limitan cuántos puede haber abiertos.
+      var x = gl && gl.getExtension('WEBGL_lose_context');
+      if (x) x.loseContext();
+      return !gl;
+    } catch (e) { return true; }
+  }
+
   function Countries(props) {
     var items = props.items || [];
     var aState = React.useState(props.defaultId || null), active = aState[0], setActive = aState[1];
@@ -416,7 +453,7 @@
       }
       fromHash();
       window.addEventListener('hashchange', fromHash);
-      if (!props.sceneUrl || !window.IntersectionObserver) return function () { window.removeEventListener('hashchange', fromHash); };
+      if (!props.sceneUrl || !window.IntersectionObserver || lite()) return function () { window.removeEventListener('hashchange', fromHash); };
       var dead = false;
       var io = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) return;
@@ -428,7 +465,8 @@
             anchors: labels.current,
             onActive: setActive,
             onSelect: choose,
-            onReady: function () { setReady(true); }
+            onReady: function () { setReady(true); },
+            onLost: function () { setReady(false); }
           });
         }).then(function (s) {
           if (dead) { s.destroy(); return; }
@@ -677,7 +715,7 @@
       view.observe(el);
       Array.prototype.forEach.call(el.children, function (c) { swipe.observe(c); });
       var timer = calm ? 0 : setInterval(function () {
-        if (seen.current && !stopped.current && el.scrollWidth <= el.clientWidth + 1) setActive(function (i) { return (i + 1) % items.length; });
+        if (seen.current && !stopped.current && !quiet() && !document.hidden && el.scrollWidth <= el.clientWidth + 1) setActive(function (i) { return (i + 1) % items.length; });
       }, 5000);
       return function () { view.disconnect(); swipe.disconnect(); clearInterval(timer); };
     }, []);
@@ -831,6 +869,7 @@
     var eState = React.useState({}), errors = eState[0], setErrors = eState[1];
     var sState = React.useState(false), sending = sState[0], setSending = sState[1];
     var fState = React.useState(''), failure = fState[0], setFailure = fState[1];
+    var mState = React.useState([]), misfit = mState[0], setMisfit = mState[1];
     var ref = React.useRef(null);
     var action = raiz() + (form.endpoint || 'enviar.php');
 
@@ -890,6 +929,22 @@
       });
     }
 
+    // Requisitos que las respuestas no cumplen (0: edad, 1: UE, 2: inglés). No impiden enviar: se avisa
+    // y enviar.php marca la candidatura en el correo para Iván.
+    function misfits(fd) {
+      var out = [], age = String(fd.get('edad') || '').trim();
+      if (/^\d{2}$/.test(age) && +age < 21) out.push(0);
+      if (fd.get('nacionalidad_ue') === 'No') out.push(1);
+      if (fd.get('nivel_ingles') === 'Menos de B1') out.push(2);
+      return out;
+    }
+
+    function changed() {
+      recheck();
+      var m = misfits(new FormData(ref.current));
+      if (m.join() !== misfit.join()) setMisfit(m);
+    }
+
     // Tras un intento de envío, cada aviso desaparece en cuanto su campo queda bien.
     function recheck() {
       var names = Object.keys(errors);
@@ -924,7 +979,7 @@
         props.whatsapp ? h('div', { className: 'rn-apply-wa' },
           h(Button, { href: 'wa:', variant: 'solid', icon: 'whatsapp' }, props.whatsapp.label),
           h('p', { className: 'rn-fine' }, props.whatsapp.note)) : null),
-      h('form', { ref: ref, className: 'rn-form', name: form.name, method: 'POST', action: action, noValidate: live, onSubmit: live ? submit : null, onChange: live ? recheck : null },
+      h('form', { ref: ref, className: 'rn-form', name: form.name, method: 'POST', action: action, noValidate: live, onSubmit: live ? submit : null, onChange: live ? changed : null },
         h('input', { type: 'hidden', name: 'form-name', value: form.name }),
         h('input', { type: 'hidden', name: 'subject', value: form.subject }),
         h('input', { type: 'hidden', name: 'idioma', value: (window.RumboNorteIdioma || {}).code || 'es' }),
@@ -948,7 +1003,9 @@
             h('input', input('edad', { type: 'text', required: true, inputMode: 'numeric', maxLength: 2, pattern: '[0-9]{2}', placeholder: L.edadPh, 'aria-describedby': errors.edad ? 'f-edad-error' : 'f-edad-hint' })),
             h('p', { className: 'rn-field-help', id: 'f-edad-hint' }, form.edadHint)),
           h(Field, { id: 'f-nacionalidad_ue', label: form.nacionalidad.label, required: true, error: errors.nacionalidad_ue }, select('nacionalidad_ue', form.nacionalidad.options)),
-          h(Field, { id: 'f-nivel_ingles', label: L.ingles, required: true, wide: true, error: errors.nivel_ingles }, select('nivel_ingles', form.ingles))),
+          h(Field, { id: 'f-nivel_ingles', label: L.ingles, required: true, wide: true, error: errors.nivel_ingles }, select('nivel_ingles', form.ingles)),
+          h('div', { className: 'rn-form-warn rn-field-wide', 'aria-live': 'polite' },
+            misfit.length ? h('p', null, rich((L.noEncaja || '').replace('{lista}', misfit.map(function (i) { return (L.requisitos || [])[i]; }).join(L.y || ', ')))) : null)),
         h(Part, { step: '03', title: parts[2] },
           h(Checks, { name: 'destino', label: L.destino, hint: L.destinoHint, options: form.destinos }),
           h(Checks, { name: 'idiomas', label: L.idiomas, hint: L.idiomasHint, options: form.idiomas })),
